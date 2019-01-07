@@ -1,14 +1,24 @@
 {
   "name": "expressjs-field-validator",
-  "version": "1.0.0",
-  "description": "",
+  "version": "1.0.2",
+  "description": "Plugin for validating field values of json request in expressjs",
+  "homepage": "https://github.com/gsmithun4/expressjs-field-validator/blob/master/README.md",
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/gsmithun4/expressjs-field-validator.git"
+  },
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
+    "nodejs",
     "expressjs",
-    "validator"
+    "middleware",
+    "express-js",
+    "validator",
+    "field",
+    "json"
   ],
   "author": "Midhun G S",
   "license": "ISC",
