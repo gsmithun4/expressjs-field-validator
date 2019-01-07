@@ -1,52 +1,117 @@
 # expressjs-field-validator
-Helps to validate json field values in Expressjs.
+Plugin for validating field values of json request in expressjs
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [Installation](#installation)
+- [Dependencies](#dependencies)
+- [Usage](#usage)
+- [validator arguments](#validator-arguments)
+  - [validator Object](#validator-object)
+    - [Nested Objets](#nested-objets)
+  - [Response object](#response-object)
+    - [Mode](#mode)
+      - [Reject](#reject)
+      - [Forward](#forward)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ## Installation  
-  	$ git clone http://10.0.0.15/6d-UI/ui-components.git
-    $ cd [your project dir]
-	$ npm install
+```
+$ npm install expressjs-field-validator
+```
 
-## Usage guide
-### Adding new menu
-1. Insert the details of new menu to be added inside array `MENU_DETAILS` in `src\util\Privilages.js`.
-2. Install the component to be rendered in your new route:
+## Dependencies
+ - [lodash](https://www.npmjs.com/package/lodash)
+ - [moment](https://www.npmjs.com/package/moment)
 
-    ```
-    $ npm i my-page
-    ```
+## Usage
 
-3. Open file `src\components\home\sub\Routes.js`
-4. Write a constant holding `Loadable` component for loading your component to be rendered:
 ```js
-const AsyncMyPage = Loadable({
-    loader: () => import('my-page'),
-    loading: Loading
+ const validator = require('expressjs-field-validator');
+```
+```js
+router.get('/users/:id',
+validator([{param : 'id', location : 'params', isRequired : true}], { mode : 'reject', errorCode : '422' }),
+(req, res, next) => {
+
 });
 ```
-5. Write your route inside `Routes` component and pass the constant in render prop
+## validator arguments
+| Argument        | Type      | Description
+|:---------------|:---------:|----------------------------|
+|validator	  |`Object[]`   |  Array of validation object |
+|Response	  |`Object`   |  This Object determines the proceeding to the next step |
+### validator Object
+
+
+| Property        | Type      | Description
+|:---------------|:---------|----------------------------|
+|param	  |`String`   | Field name|
+|location	  |`String`   | Location of the field (`body`/`params`/`query`) |
+|children	  |`Object[]`   |Array of Child validator objects, only applicable if the field is `Array` or `Object`  |
+|isArray	  |`Boolean`   |The value is `Array` or not (default `false`)|
+|isObject	  |`Boolean`   |The value is `Object` or not (default `false`)|
+|isRequired	  |`Boolean`   |The value is mandatory or not (default `false`)|
+|isNumber	  |`Boolean`   |The value is `Number` or not (default `false`)|
+|isEmail	  |`Boolean`   |The value is `Email` or not (default `false`)|
+|isBoolean	  |`Boolean`   |The value is `Boolean` or not (default `false`)|
+|isDate	  |`Boolean`   |The value is `Date` or not (default `false`)|
+|format	  |`String`   |Date format|
+|length	  |`Object`   |Object `{min : 1, max : 10}` describes minimum and maximum length|
+|message	  |`String`   |Error message thrown in case of test fails|
+
+#### Nested Objets
+Only applicable in case of `Object` and `Array` `isArray` or `isObject` must be true
+if json structure is
 ```js
-    <Route exact path="/mypage" render={ () => <AsyncMyPage
-          {...properties}
-          url_User={CONSTANTS.USER_MGMNT}
-          url_SalesHierarchy={CONSTANTS.SALES_HIERARCHY}
-          url_DocType_List={CONSTANTS.DOCTYPE.LIST_URL}
-          url_ChannelPartners_SearchUrl={CONSTANTS.CHANNEL_PARTNERS.SEARCH_URL}
-          menuPrivilages={MENU_PRIVILIAGES.USER_MGMNT}
-        />
-      }
-      />
+{
+	"page" : {
+		"sorted" : "True"
+	},
+    "sort" : [{
+	    "value" : [{
+		    "date" : "2019-01-01",
+		    "length" : {"min" : "1", "max" : "100"}
+	}]
+}]
 ```
-6. Urls and other constants can be written inside `src\util\Constants.js`
-### Login and logout
-configure the login and logout urls as `LOGIN_URL` and `LOGOUT_URL` respectively inside `src\util\Constants.js` file
+the validator object
+```js
+{param : 'page', location : 'body', isObject : true, children : [
+    {param : 'sorted', location : 'body.page', isRequired : true, isBoolean : true},
+  ]},
+  {param : 'sort', location : 'body', isArray : true, children : [
+    {param : 'value', location : 'body.sort', isArray : true, children : [
+      {param : 'date', location : 'body.sort.value', isRequired : true, isDate : true},
+      {param : 'length', location : 'body.sort.value', isObject : true, children : [
+        {param : 'min', location : 'body.sort.value.length', isNumber : true},
+        {param : 'max', location : 'body.sort.value.length', isNumber : true}
+      ]}
+    ]}
+  ]}
+```
+### Response object
+| Property        | Type      | Description
+|:---------------|:---------|----------------------------|
+|mode	  |`String`   | can be `reject` or `forward`, Mandatory field|
+|errorCode	  |`String`   | Error code thrown |
 
-## Configuring urls
-All the urls are configured inside `src\util\Constants.js`. Apart from the existing urls, user can add there own component specfic urls. The following url constants are added by default.
-
-| property | Description
-|:---------------:|-------------|
-| AUTH_KEY | Auth key to be send to the BL application
-| LOGIN_URL | BL login url
-| LOGOUT_URL | BL logout url
-| CHANGE_PSWD_URL | BL change password url
-| FORGET_PSWD_URL | BL forgot/reset password url
+#### Mode
+Value can be can be `reject` or `forward`.
+##### Reject
+Response is sent back with http status code provided in `errorCode` property
+```js
+{
+    "error": [
+        {
+            "location": "body.sort",
+            "param": "sort",
+            "message": "Invalid Field Error"
+        }
+    ]
+}
+```
+##### Forward
+Error is set to `locals.data` and error code to `locals.statusCode`. Forward the request to next middleware.
