@@ -82,7 +82,8 @@ if json structure is
 ```
 the validator object
 ```js
-{param : 'page', location : 'body', isObject : true, children : [
+[
+  {param : 'page', location : 'body', isObject : true, children : [
     {param : 'sorted', location : 'body.page', isRequired : true, isBoolean : true},
   ]},
   {param : 'sort', location : 'body', isArray : true, children : [
@@ -94,6 +95,7 @@ the validator object
       ]}
     ]}
   ]}
+ ]
 ```
 ### Response object
 | Property        | Type      | Description
