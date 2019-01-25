@@ -69,15 +69,16 @@ Only applicable in case of `Object` and `Array` `isArray` or `isObject` must be 
 if json structure is
 ```js
 {
-	"page" : {
-		"sorted" : "True"
-	},
-    "sort" : [{
-	    "value" : [{
-		    "date" : "2019-01-01",
-		    "length" : {"min" : "1", "max" : "100"}
-	}]
-}]
+  "page" : {
+    "sorted" : "True"
+  },
+  "sort" : [{
+    "value" : [{
+	"date" : "2019-01-01",
+	"length" : {"min" : "1", "max" : "100"}
+    }]
+  }]
+}
 ```
 the validator object
 ```js
