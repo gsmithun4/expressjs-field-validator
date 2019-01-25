@@ -8,30 +8,31 @@ app.use(bodyParser.json());
 
 app.post('/test',
 validator([
-  {param : 'page', location : 'body', isObject : true, children : [
-    {param : 'sorted', location : 'body.page', isRequired : true, isBoolean : true},
-  ]},
-  {param : 'sort', location : 'body', isArray : true, children : [
-    {param : 'a', location : 'body.sort', isArray : true, children : [
-      {param : 'sort', location : 'body.sort.a', isRequired : true, isDate : true},
-      {param : 'pageNumber', location : 'body.sort.a', isObject : true, children : [
-        {param : 'b', location : 'body.sort.a.pageNumber', isNumber : true},
-        {param : 'c', location : 'body.sort.a.pageNumber', isNumber : true}
-      ]},
-      {param : 'pageNumber1', location : 'body.sort.a', isObject : true, children : [
-        {param : 'd', location : 'body.sort.a.pageNumber1', isNumber : true},
-        {param : 'e', location : 'body.sort.a.pageNumber1', isNumber : true}
-      ]}
-    ]}
-  ]}
+  {param : 'id', location : 'params', isRequired : false}
+  // {param : 'page', location : 'body', isObject : true, children : [
+  //   {param : 'sorted', location : 'body.page', isRequired : true, isBoolean : true},
+  // ]},
+  // {param : 'sort', location : 'body', isArray : true, children : [
+  //   {param : 'a', location : 'body.sort', isArray : true, children : [
+  //     {param : 'sort', location : 'body.sort.a', isRequired : true, isDate : true},
+  //     {param : 'pageNumber', location : 'body.sort.a', isObject : true, children : [
+  //       {param : 'b', location : 'body.sort.a.pageNumber', isNumber : true},
+  //       {param : 'c', location : 'body.sort.a.pageNumber', isNumber : true}
+  //     ]},
+  //     {param : 'pageNumber1', location : 'body.sort.a', isObject : true, children : [
+  //       {param : 'd', location : 'body.sort.a.pageNumber1', isNumber : true},
+  //       {param : 'e', location : 'body.sort.a.pageNumber1', isNumber : true}
+  //     ]}
+  //   ]}
+  // ]}
 ],
 { mode : 'reject', errorCode : '422' }),
 (req, res, next) => {
-  if (res.locals.statusCode === errorCode.Field.Invalid_Field)
+  if (res.locals.statusCode === 422)
     console.log("Invalid Field Status Code");
 
   console.log("Exit");
-  res.status(200)
+  res.status(200).send();
 
 });
 
