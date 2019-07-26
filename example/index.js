@@ -8,7 +8,7 @@ app.use(bodyParser.json());
 
 app.post('/test',
 validator([
-  {param : 'id', location : 'params', isRequired : false}
+  {param : 'id', location : 'body', isRequired : true, isNumber : true, range : {min: 3, max: 10}}
   // {param : 'page', location : 'body', isObject : true, children : [
   //   {param : 'sorted', location : 'body.page', isRequired : true, isBoolean : true},
   // ]},
@@ -26,7 +26,7 @@ validator([
   //   ]}
   // ]}
 ],
-{ mode : 'reject', errorCode : '422' }),
+{ mode : 'reject', errorCode : '422', debg: true }),
 (req, res, next) => {
   if (res.locals.statusCode === 422)
     console.log("Invalid Field Status Code");
