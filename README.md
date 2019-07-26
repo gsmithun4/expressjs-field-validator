@@ -8,7 +8,7 @@ Plugin for validating field values of json request in expressjs
 
 - [Installation](#installation)
 - [Dependencies](#dependencies)
-- [Usage](#usage)
+- [How To Use](#how-to-use)
 - [validator arguments](#validator-arguments)
   - [validator Object](#validator-object)
     - [Nested Objets](#nested-objets)
@@ -16,6 +16,7 @@ Plugin for validating field values of json request in expressjs
     - [Mode](#mode)
       - [Reject](#reject)
       - [Forward](#forward)
+    - [debug](#debug)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -28,7 +29,7 @@ $ npm install expressjs-field-validator
  - [lodash](https://www.npmjs.com/package/lodash)
  - [moment](https://www.npmjs.com/package/moment)
 
-## Usage
+## How To Use
 
 ```js
  const validator = require('expressjs-field-validator');
@@ -57,15 +58,17 @@ validator([{param : 'id', location : 'params', isRequired : true}], { mode : 're
 |isObject	  |`Boolean`   |The value is `Object` or not (default `false`)|
 |isRequired	  |`Boolean`   |The value is mandatory or not (default `false`)|
 |isNumber	  |`Boolean`   |The value is `Number` or not (default `false`)|
+|range	  |`Object`   |Object `{min : 1, max : 10}` describes minimum and maximum value of a Number field|
 |isEmail	  |`Boolean`   |The value is `Email` or not (default `false`)|
 |isBoolean	  |`Boolean`   |The value is `Boolean` or not (default `false`)|
 |isDate	  |`Boolean`   |The value is `Date` or not (default `false`)|
 |format	  |`String`   |Date format|
+|regEx	  |`RegEx`   |Regular Expression to match with field|
 |length	  |`Object`   |Object `{min : 1, max : 10}` describes minimum and maximum length|
 |message	  |`String`   |Error message thrown in case of test fails|
 
 #### Nested Objets
-Only applicable in case of `Object` and `Array` `isArray` or `isObject` must be true
+In case of `Object` or `Array`, `isArray` or `isObject` must be true
 if json structure is
 ```js
 {
@@ -101,7 +104,8 @@ the validator object
 | Property        | Type      | Description
 |:---------------|:---------|----------------------------|
 |mode	  |`String`   | can be `reject` or `forward`, Mandatory field|
-|errorCode	  |`String`   | Error code thrown |
+|errorCode	  |`String`   | Error code send in response. default `422` Error|
+|debug	  |`Boolean`   | set `true` to respond back more details on error |
 
 #### Mode
 Value can be can be `reject` or `forward`.
@@ -120,3 +124,18 @@ Response is sent back with http status code provided in `errorCode` property
 ```
 ##### Forward
 Error is set to `locals.data` and error code to `locals.statusCode`. Forward the request to next middleware.
+
+#### debug
+If `debug` is set to `true`, error response will be
+```js
+{
+    "error": [
+        {
+            "location": "body.sort",
+            "param": "sort",
+            "message": "Invalid Field Error :: somevalueforsort Must Be A Boolean"
+        }
+    ]
+}
+```
+It will give more idea about the error.
