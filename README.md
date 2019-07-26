@@ -6,6 +6,7 @@ Plugin for validating field values of json request in expressjs
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
+- [What is New In 1.0.5](#what-is-new-in-105)
 - [Installation](#installation)
 - [Dependencies](#dependencies)
 - [How To Use](#how-to-use)
@@ -19,6 +20,11 @@ Plugin for validating field values of json request in expressjs
     - [debug](#debug)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+## What is New In 1.0.5
+- Min and Max range validation support for numbers
+- RegEx validation support
+- Include and Exclude value lists
+- Debug mode to get more details on errors
 
 ## Installation  
 ```
