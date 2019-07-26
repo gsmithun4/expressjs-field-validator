@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const moment = require('moment');
 
-module.exports = (validation = [], response) => {
+module.exports = (validation = [], response = {}) => {
   const validator = (() => {
     const validate = (validation, req) => {
       const errorList = [];
@@ -48,25 +48,46 @@ module.exports = (validation = [], response) => {
       }
       const checkFormat = (value, validateObj) => {
         const { param, location, isRequired, isNumber, isEmail, isBoolean,
-          length, message, isDate, format, isArray, isObject } = validateObj;
+          length, message, isDate, format, isArray, isObject, regEx, range, includes, excludes } = validateObj;
 
+        const validateRegEx = (regex) => {
+          return regex instanceof RegExp;
+        }
+        const testRegEx = (regex, value) => {
+          return regex.test(value);
+        }
         const validateEmail = () => {
           const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-          return re.test(String(value).toLowerCase());
+          return testRegEx(re, String(value).toLowerCase());
         }
+       
         try {
           const isEmpty = checkEmpty(value);
           if (isRequired) {
             if (isEmpty) {
-              throw 'Invalid Param';
+              throw 'Required';
             }
           }
           if (!isEmpty) {
-            if (isNumber && isNaN(value))
-              throw 'Invalid Param';
+            if (regEx) {
+              if (!validateRegEx(regEx))
+                throw 'Invalid RegEx';
+              if (!testRegEx(regEx))
+                throw `Not Matching to Reg Ex :: ${regEx.toString()}`;
+            }
+            if (isNumber) {
+              if (isNaN(value))
+                throw 'Must Be A Number';
+              if (range) {
+                if (!isNaN(range.min) && range.min > value) 
+                  throw `Mininum Range Must Be ${range.min}`;
+                if (!isNaN(range.max) && range.max < value) 
+                throw `Maximum Range Must Be ${range.max}`;
+              }
+            }
 
             if (isEmail && !validateEmail())
-              throw 'Invalid Param';
+              throw 'Must Be A Email Id';
 
             if (length) {
               let varVal = value;
@@ -74,32 +95,38 @@ module.exports = (validation = [], response) => {
                 varVal = varVal.toString();
               }
               if (length.min && varVal.length < length.min) {
-                throw 'Invalid Param';
+                throw `Mininum Length Must Be ${length.min}`;
               }
               if (length.max && varVal.length > length.max) {
-                throw 'Invalid Param';
+                throw `Maximum Length Must Be ${length.max}`;
               }
             }
             if (isArray && !Array.isArray(value)) {
-              throw 'Invalid Param';
+              throw 'Must Be An Array';
             }
             if (isObject && !_.isObject(value) && Array.isArray(value)) {
-              throw 'Invalid Param';
+              throw 'Must Be An Object';
             }
             if (isDate) {
               if (!moment(value, format || 'YYYY-MM-DD').isValid()) {
-                throw 'Invalid Param';
+                throw `Must Be A Date With Format ${format || 'YYYY-MM-DD'}`;
               }
             }
             if (isBoolean) {
               if (!_.isBoolean(value) && value.toLowerCase() !== "true" && value.toLowerCase() !== "false") {
-                throw 'Invalid Param';
+                throw 'Must Be A Boolean';
               }
+            }
+            if (includes && Array.isArray(includes) && includes.length > 0 && !includes.includes(value)) {
+              throw `Must In ${includes.toString()}`;
+            }
+            if (excludes && Array.isArray(excludes) && excludes.length > 0 && excludes.includes(value)) {
+              throw `Must Not Be In ${excludes.toString()}`;
             }
           }
 
         } catch (err) {
-          return { location, param, message : message || 'Invalid Field Error' };
+          return { location, param, message : `${message || 'Invalid Field Error'}${response.debg ? (` :: ${value && value.toString()} : ${err}`) : ''}` };
         }
       }
       const getChildErrors = (child, value) => {
@@ -154,17 +181,15 @@ module.exports = (validation = [], response) => {
     }
     const validateFields = (req, res, next) => {
       const error = _.reject(_.flattenDeep(validation.map(validateObj => validate(validateObj, req))), _.isNil);
-      if (error && error.length > 0 && response) {
-        if (response.mode === 'reject') {
-          return res.status(response.errorCode).send({ error });
-
-        } else if (response.mode === 'forward') {
-          res.locals.statusCode = response.errorCode;
+      if (error && error.length > 0) {
+        
+        if (response.mode === 'forward') {
+          res.locals.statusCode = response.errorCode || 422;
           res.locals.data = { error };
           return next();
 
-        } else
-          return next();
+        } else // Reject
+          return res.status(response.errorCode || 422).send({ error });
 
       } else
         return next();
