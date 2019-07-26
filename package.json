@@ -1,11 +1,11 @@
 {
   "name": "expressjs-field-validator",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Plugin for validating field values of json request in expressjs",
   "homepage": "https://github.com/gsmithun4/expressjs-field-validator/blob/master/README.md",
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/gsmithun4/expressjs-field-validator.git"
+    "type": "git",
+    "url": "https://github.com/gsmithun4/expressjs-field-validator.git"
   },
   "main": "index.js",
   "scripts": {
@@ -23,7 +23,7 @@
   "author": "Midhun G S",
   "license": "ISC",
   "dependencies": {
-    "lodash": "^4.17.11",
-    "moment": "^2.23.0"
+    "lodash": "^4.17.15",
+    "moment": "^2.24.0"
   }
 }
