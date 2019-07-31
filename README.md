@@ -71,6 +71,8 @@ validator([{param : 'id', location : 'params', isRequired : true}], { mode : 're
 |format	  |`String`   |Date format|
 |regEx	  |`RegEx`   |Regular Expression to match with field|
 |length	  |`Object`   |Object `{min : 1, max : 10}` describes minimum and maximum length|
+|includes	  |`Array`   |Value must be one of the element in the array|
+|excludes	  |`Array`   |Value must not be one of the element in the array|
 |message	  |`String`   |Error message thrown in case of test fails|
 
 #### Nested Objets
