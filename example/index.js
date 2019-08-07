@@ -8,7 +8,7 @@ app.use(bodyParser.json());
 
 app.post('/test',
 validator([
-  {param : 'id', location : 'body', isRequired : true, isNumber : true, range : {min: 3, max: 10}}
+  {param : 'id', location : 'body', isRequired : true, mobileNumber : {isCountryCodeMandatory: true, countryCode: '91', length: {min: 10, max: 12}}}
   // {param : 'page', location : 'body', isObject : true, children : [
   //   {param : 'sorted', location : 'body.page', isRequired : true, isBoolean : true},
   // ]},
