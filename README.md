@@ -68,11 +68,12 @@ validator([{param : 'id', location : 'params', isRequired : true}], { mode : 're
 |isEmail	  |`Boolean`   |The value is `Email` or not (default `false`)|
 |isBoolean	  |`Boolean`   |The value is `Boolean` or not (default `false`)|
 |isDate	  |`Boolean`   |The value is `Date` or not (default `false`)|
+|mobileNumber	  |`Object`   |Object `{countryCode : '91', isCountryCodeMandatory : true, length: {min : 1, max : 10}}` ,describes characteristics of mobile number, length is the length range of mobile number excluding country code |
 |format	  |`String`   |Date format|
 |regEx	  |`RegEx`   |Regular Expression to match with field|
 |length	  |`Object`   |Object `{min : 1, max : 10}` describes minimum and maximum length|
-|includes	  |`Array`   |Value must be one of the element in the array|
-|excludes	  |`Array`   |Value must not be one of the element in the array|
+|includes	  |`Object[]`   |Value must be one of the element in the array|
+|excludes	  |`Object[]`   |Value must not be one of the element in the array|
 |message	  |`String`   |Error message thrown in case of test fails|
 
 #### Nested Objets
