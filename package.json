@@ -1,6 +1,6 @@
 {
   "name": "expressjs-field-validator",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Plugin for validating field values of json request in expressjs",
   "homepage": "https://github.com/gsmithun4/expressjs-field-validator/blob/master/README.md",
   "repository": {
