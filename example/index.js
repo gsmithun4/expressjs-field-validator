@@ -26,7 +26,7 @@ validator([
   //   ]}
   // ]}
 ],
-{ mode : 'reject', errorCode : '422', debg: true }),
+{ mode : 'reject', errorCode : '422', debug: true }),
 (req, res, next) => {
   if (res.locals.statusCode === 422)
     console.log("Invalid Field Status Code");
