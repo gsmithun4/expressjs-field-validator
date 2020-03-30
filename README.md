@@ -41,7 +41,7 @@ $ npm install expressjs-field-validator
 ## How To Use
 
 ```js
- const validator = require('expressjs-field-validator');
+ const { validator } = require('expressjs-field-validator');
 ```
 ```js
 router.get('/users/:id',
