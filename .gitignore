@@ -1,4 +1,4 @@
 # dependencies
 /node_modules
 example/node_modules
-/lib/validator/index.js
+#/lib/validator/index.js

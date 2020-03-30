@@ -2,3 +2,4 @@
 /node_modules
 /example
 /.github
+/lib/validator/validator.js
