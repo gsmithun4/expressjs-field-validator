@@ -17,7 +17,7 @@ jobs:
         with:
           node-version: 12
       - run: npm ci
-      - run: npm minify
+      - run: npm run minify
 
   publish-npm:
     needs: build
