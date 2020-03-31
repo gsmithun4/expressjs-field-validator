@@ -77,7 +77,7 @@ validator([{param : 'id', location : 'params', isRequired : true}], { mode : 're
 |length	  |`Object`   |Object `{min : 1, max : 10}` describes minimum and maximum length|
 |includes	  |`Object[]`   |Value must be one of the element in the array|
 |excludes	  |`Object[]`   |Value must not be one of the element in the array|
-|message	  |`String`   |Error message thrown in case of test fails|
+|message	  |`String`   |Error message thrown in case of test fails default : Invalid Field Error|
 
 #### Nested Objets
 In case of `Object` or `Array`, `isArray` or `isObject` must be true
@@ -99,7 +99,7 @@ the validator object
 ```js
 [
   {param : 'page', location : 'body', isObject : true, children : [
-    {param : 'sorted', location : 'body.page', isRequired : true, isBoolean : true},
+    {param : 'sorted', location : 'body.page', isRequired : true, isBoolean : true, message='Mandatory field page missing'},
   ]},
   {param : 'sort', location : 'body', isArray : true, children : [
     {param : 'value', location : 'body.sort', isArray : true, children : [
