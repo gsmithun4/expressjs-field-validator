@@ -51,6 +51,7 @@ validator([{param : 'id', location : 'params', isRequired : true}], { mode : 're
 });
 ```
 ## validator arguments
+
 | Argument        | Type      | Description
 |:---------------|:---------:|----------------------------|
 |validator	  |`Object[]`   |  Array of validation object |
@@ -113,6 +114,7 @@ the validator object
  ]
 ```
 ### Response object
+
 | Property        | Type      | Description
 |:---------------|:---------|----------------------------|
 |mode	  |`String`   | can be `reject` or `forward`, Mandatory field|
