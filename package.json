@@ -1,8 +1,8 @@
 {
   "name": "expressjs-field-validator",
-  "version": "1.0.16",
+  "version": "1.0.17",
   "description": "Plugin for validating field values of json request in expressjs",
-  "homepage": "https://github.com/gsmithun4/expressjs-field-validator/blob/master/README.md",
+  "homepage": "https://github.com/gsmithun4/expressjs-field-validator",
   "repository": {
     "type": "git",
     "url": "https://github.com/gsmithun4/expressjs-field-validator.git"
@@ -13,16 +13,18 @@
     "minify": "node-minify --compressor uglify-es --input './lib/validator/validator.js' --output './lib/validator/index.js'"
   },
   "keywords": [
-    "nodejs",
     "expressjs",
     "middleware",
     "express-js",
     "validator",
     "field",
-    "json"
+    "validation",
+    "validate",
+    "request",
+    "params"
   ],
   "author": "Midhun G S",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "lodash": "^4.17.15",
     "moment": "^2.24.0"
