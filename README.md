@@ -21,13 +21,7 @@ Plugin for validating field values of json request in expressjs
     - [debug](#debug)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
-## What is New In 1.0.7
-- Defined new parameter type - Mobile Number.
-## What is New In 1.0.5
-- Min and Max range validation support for numbers
-- RegEx validation support
-- Include and Exclude value lists
-- Debug mode to get more details on errors
+
 
 ## Installation  
 ```
@@ -56,6 +50,7 @@ validator([{param : 'id', location : 'params', isRequired : true}], { mode : 're
 |:---------------|:---------:|----------------------------|
 |validator	  |`Object[]`   |  Array of validation object |
 |Response	  |`Object`   |  This Object determines the proceeding to the next step |
+
 ### validator Object
 
 
