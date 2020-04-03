@@ -6,8 +6,6 @@ Plugin for validating field values of json request in expressjs
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
-- [What is New In 1.0.7](#what-is-new-in-107)
-- [What is New In 1.0.5](#what-is-new-in-105)
 - [Installation](#installation)
 - [Dependencies](#dependencies)
 - [How To Use](#how-to-use)
