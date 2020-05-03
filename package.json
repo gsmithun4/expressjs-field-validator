@@ -1,6 +1,6 @@
 {
   "name": "expressjs-field-validator",
-  "version": "1.0.20",
+  "version": "1.0.21",
   "description": "Plugin for validating field values of json request in expressjs",
   "homepage": "https://github.com/gsmithun4/expressjs-field-validator",
   "repository": {
@@ -10,7 +10,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "minify": "node-minify --compressor uglify-es --input './lib/validator/validator.js' --output './lib/validator/validator.js' && node-minify --compressor uglify-es --input './lib/validator/checkService.js' --output './lib/validator/checkService.js' && node-minify --compressor uglify-es --input 'index.js' --output 'index.js'"
+    "minify": "node-minify --compressor uglify-es --input './lib/validator/validator.js' --output './lib/validator/validator.js' && node-minify --compressor uglify-es --input './lib/checkService/checkService.js' --output './lib/checkService/checkService.js' && node-minify --compressor uglify-es --input 'index.js' --output 'index.js'"
   },
   "keywords": [
     "expressjs",
