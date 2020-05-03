@@ -146,3 +146,17 @@ If `debug` is set to `true`, error response will be
 }
 ```
 It will give more idea about the error.
+
+## checkService
+```js
+ const { checkService } = require('expressjs-field-validator');
+```
+
+It helps to skip the main service function, if you have used forward mode.
+### Usage
+```js
+async (req, resp, next) => {
+  checkService(req, resp, next);
+}
+```
+
