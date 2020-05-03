@@ -1,3 +1,4 @@
-const validator = require('./lib/validator');
+const validator = require('./lib/validator/validator');
+const checkService = require('./lib/validator/checkService');
 
-module.exports = { validator };
+module.exports = { validator, checkService };
