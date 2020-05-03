@@ -130,7 +130,7 @@ Response is sent back with http status code provided in `errorCode` property
 }
 ```
 ##### Forward
-Error is set to `locals.data` and error code to `locals.statusCode`. Forward the request to next middleware.
+Error is set to `request.locals.data` and error code to `request.locals.statusCode`. Forward the request to next middleware.
 
 #### debug
 If `debug` is set to `true`, error response will be
