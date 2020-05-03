@@ -154,9 +154,10 @@ It will give more idea about the error.
 
 It helps to skip the main service function, if you have used forward mode.
 ### Usage
+Pass your service function to `checkService`, which must be skipped.
 ```js
-async (req, resp, next) => {
-  checkService(req, resp, next);
+checkService((req, resp, next) => {
+  
 }
 ```
 
