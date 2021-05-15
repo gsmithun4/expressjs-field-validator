@@ -3,4 +3,6 @@
 /example
 /.github
 /lib/validator/validator.js
+/lib/validator/validator.test.js
 /lib/checkService/checkService.js
+/lib/checkService/checkService.test.js

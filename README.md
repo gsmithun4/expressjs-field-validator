@@ -40,6 +40,8 @@ router.get('/users/:id',
 validator([{param : 'id', location : 'params', isRequired : true}], { mode : 'reject', errorCode : '422' }),
 (req, res, next) => {
 
+  // Main Service Here
+
 });
 ```
 ## validator arguments
@@ -55,7 +57,7 @@ validator([{param : 'id', location : 'params', isRequired : true}], { mode : 're
 | Property        | Type      | Description
 |:---------------|:---------|----------------------------|
 |param	  |`String`   | Field name|
-|location	  |`String`   | Location of the field (`body`/`params`/`query`) |
+|location	  |`String`   | Location of the field (`body`/`params`/`query`) only mandatory for higher order objects (direclty under `body`/`params`/`query`) default `body` |
 |children	  |`Object[]`   |Array of Child validator objects, only applicable if the field is `Array` or `Object`  |
 |isArray	  |`Boolean`   |The value is `Array` or not (default `false`)|
 |isObject	  |`Boolean`   |The value is `Object` or not (default `false`)|
@@ -65,9 +67,8 @@ validator([{param : 'id', location : 'params', isRequired : true}], { mode : 're
 |isEmail	  |`Boolean`   |The value is `Email` or not (default `false`)|
 |isBoolean	  |`Boolean`   |The value is `Boolean` or not (default `false`)|
 |isDate	  |`Boolean`   |The value is `Date` or not (default `false`)|
+|format	  |`String`   |Date format. Please reffer https://momentjs.com/docs/ for date formats|
 |mobileNumber	  |`Object`   |Object `{countryCode : '91', isCountryCodeMandatory : true, length: {min : 1, max : 10}}` ,describes characteristics of mobile number, length is the length range of mobile number excluding country code |
-|format	  |`String`   |Date format|
-|regEx	  |`RegEx`   |Regular Expression to match with field|
 |length	  |`Object`   |Object `{min : 1, max : 10}` describes minimum and maximum length|
 |includes	  |`Object[]`   |Value must be one of the element in the array|
 |excludes	  |`Object[]`   |Value must not be one of the element in the array|
@@ -158,6 +159,20 @@ Pass your service function to `checkService`, which must be skipped.
 ```js
 checkService((req, resp, next) => {
   
-}
+})
+```
+```js
+router.get('/users/:id',
+validator([{param : 'id', location : 'params', isRequired : true, isNumber: true}], { mode : 'forward' }),
+checkService((req, res, next) => {
+
+  // This middleware is skipped if id is empty or not a number
+  
+}),
+(req, res, next) => {
+
+  // This middleware Will not be skipped, error data will be availble here - req.locals.data and status code - request.locals.statusCode here 
+  
+});
 ```
 
