@@ -176,3 +176,33 @@ checkService((req, res, next) => {
 });
 ```
 
+## skipService
+```js
+ const { skipService } = require('expressjs-field-validator');
+
+ skipService(req, 'SOME-ERROR');
+```
+### Arguments
+| Property        | Type      | Description
+|:---------------|:---------|----------------------------|
+|req	  |`Object`   | Pass the request object|
+|statusCode	  |`String`   | Some status code to identify the error. Read the data from `request.locals.statusCode` |
+
+It helps to skip the main service function manually.
+### Usage
+Pass your service function to `checkService`, which must be skipped. Use `skipService` in the middleware which is added before the main service
+```js
+[
+  (req, resp, next) => {
+    skipService(req, 'SOME-ERROR');
+    next();
+  },
+  checkService((req, resp, next) => {
+    // This will be skipped
+  }),
+  (req, resp, next) => {
+    // This will not be skipped
+  }
+]
+```
+
