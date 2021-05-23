@@ -15,15 +15,17 @@
     "minify": "node-minify --compressor uglify-es --input './lib/validator/validator.js' --output './lib/validator/index.js' && node-minify --compressor uglify-es --input './lib/checkService/checkService.js' --output './lib/checkService/index.js' && node-minify --compressor uglify-es --input './lib/skipService/skipService.js' --output './lib/skipService/index.js' && node-minify --compressor uglify-es --input 'index.js' --output 'index.js'"
   },
   "keywords": [
-    "expressjs",
-    "middleware",
-    "express-js",
+    "request validation",
+    "api request",
     "validator",
     "field",
     "validation",
     "validate",
     "request",
-    "params"
+    "params",
+    "expressjs",
+    "middleware",
+    "express-js"
   ],
   "author": "Midhun G S",
   "license": "MIT",

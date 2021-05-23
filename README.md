@@ -1,5 +1,5 @@
 # expressjs-field-validator
-Plugin for validating field values of json request in expressjs
+Request field validator for expressjs
 
 [![Dependency Status](https://david-dm.org/gsmithun4/expressjs-field-validator.svg)](https://david-dm.org/gsmithun4/expressjs-field-validator)
 [![Dev Dependency Status](https://status.david-dm.org/gh/gsmithun4/expressjs-field-validator.svg?type=dev)](https://david-dm.org/gsmithun4/expressjs-field-validator?type=dev)
@@ -17,7 +17,7 @@ Plugin for validating field values of json request in expressjs
 [![vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=gsmithun4_expressjs-field-validator&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=gsmithun4_expressjs-field-validator)
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+<!-- **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)* -->
 
 - [Installation](#installation)
 - [Dependencies](#dependencies)
