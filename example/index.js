@@ -1,10 +1,9 @@
 const express = require('express');
-const bodyParser = require('body-parser');
-const validator = require('./validator');
+const { validator } = require('expressjs-field-validator');
 const app = express();
 
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
 app.post('/test',
 validator([
