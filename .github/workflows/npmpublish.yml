@@ -17,14 +17,19 @@ jobs:
           node-version: 14
           registry-url: https://registry.npmjs.org/
       - run: npm ci
-      - run: npm run test:coverage
+      - run: npm run test
 
   sonarcloud:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+    - uses: actions/setup-node@v1
       with:
         fetch-depth: 0
+        node-version: 14
+        registry-url: https://registry.npmjs.org/
+    - run: npm ci
+    - run: npm run test:coverage
     - name: SonarCloud Scan
       uses: sonarsource/sonarcloud-github-action@master
       env:
