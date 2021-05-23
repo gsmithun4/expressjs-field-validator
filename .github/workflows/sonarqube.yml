@@ -10,7 +10,7 @@ on:
       - development
   pull_request:
     branches:
-      - feat/**
+      - master
       - development
 
 jobs:
