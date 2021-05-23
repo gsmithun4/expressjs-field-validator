@@ -3,6 +3,30 @@ Plugin for validating field values of json request in expressjs
 
 [![Dependency Status](https://david-dm.org/gsmithun4/expressjs-field-validator.svg)](https://david-dm.org/gsmithun4/expressjs-field-validator)
 [![Dev Dependency Status](https://status.david-dm.org/gh/gsmithun4/expressjs-field-validator.svg?type=dev)](https://david-dm.org/gsmithun4/expressjs-field-validator?type=dev)
+
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=gsmithun4_expressjs-field-validator&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=gsmithun4_expressjs-field-validator)
+
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=gsmithun4_expressjs-field-validator&metric=bugs)](https://sonarcloud.io/dashboard?id=gsmithun4_expressjs-field-validator)
+
+[![code_smells](https://sonarcloud.io/api/project_badges/measure?project=gsmithun4_expressjs-field-validator&metric=code_smells)](https://sonarcloud.io/dashboard?id=gsmithun4_expressjs-field-validator)
+
+[![coverage](https://sonarcloud.io/api/project_badges/measure?project=gsmithun4_expressjs-field-validator&metric=coverage)](https://sonarcloud.io/dashboard?id=gsmithun4_expressjs-field-validator)
+
+[![duplicated_lines_density](https://sonarcloud.io/api/project_badges/measure?project=gsmithun4_expressjs-field-validator&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=gsmithun4_expressjs-field-validator)
+
+[![ncloc](https://sonarcloud.io/api/project_badges/measure?project=gsmithun4_expressjs-field-validator&metric=ncloc)](https://sonarcloud.io/dashboard?id=gsmithun4_expressjs-field-validator)
+
+[![sqale_rating](https://sonarcloud.io/api/project_badges/measure?project=gsmithun4_expressjs-field-validator&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=gsmithun4_expressjs-field-validator)
+
+[![alert_status](https://sonarcloud.io/api/project_badges/measure?project=gsmithun4_expressjs-field-validator&metric=alert_status)](https://sonarcloud.io/dashboard?id=gsmithun4_expressjs-field-validator)
+
+[![security_rating](https://sonarcloud.io/api/project_badges/measure?project=gsmithun4_expressjs-field-validator&metric=security_rating)](https://sonarcloud.io/dashboard?id=gsmithun4_expressjs-field-validator)
+
+[![security_rating](https://sonarcloud.io/api/project_badges/measure?project=gsmithun4_expressjs-field-validator&metric=security_rating)](https://sonarcloud.io/dashboard?id=gsmithun4_expressjs-field-validator)
+
+[![sqale_index](https://sonarcloud.io/api/project_badges/measure?project=gsmithun4_expressjs-field-validator&metric=sqale_index)](https://sonarcloud.io/dashboard?id=gsmithun4_expressjs-field-validator)
+
+[![vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=gsmithun4_expressjs-field-validator&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=gsmithun4_expressjs-field-validator)
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
