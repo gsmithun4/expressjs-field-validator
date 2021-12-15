@@ -44,10 +44,6 @@ Request field validator for expressjs
 $ npm install expressjs-field-validator
 ```
 
-## Dependencies
- - [lodash](https://www.npmjs.com/package/lodash)
- - [moment](https://www.npmjs.com/package/moment)
-
 ## How To Use
 
 ```js
@@ -85,13 +81,23 @@ validator([{param : 'id', location : 'params', isRequired : true}], { mode : 're
 |isEmail	  |`Boolean`   |The value is `Email` or not (default `false`)|
 |isBoolean	  |`Boolean`   |The value is `Boolean` or not (default `false`)|
 |isDate	  |`Boolean`   |The value is `Date` or not (default `false`)|
-|format	  |`String`   |Date format. Please reffer https://momentjs.com/docs/ for date formats|
+|format	  |`String`   |Date format. (default `YYYY-MM-DD`)|
 |mobileNumber	  |`Object`   |Object `{countryCode : '91', isCountryCodeMandatory : true, length: {min : 1, max : 10}}` ,describes characteristics of mobile number, length is the length range of mobile number excluding country code |
 |length	  |`Object`   |Object `{min : 1, max : 10}` describes minimum and maximum length|
 |includes	  |`Object[]`   |Value must be one of the element in the array|
 |excludes	  |`Object[]`   |Value must not be one of the element in the array|
 |message	  |`String`   |Error message thrown in case of test fails default : Invalid Field Error|
 
+#### Supported date formats
+If `isDate` is true you can pass `format`, Only supported the following
+```
+YYYY-MM-DD
+DD-MM-YYYY'
+MM-DD-YYYY'
+YYYY/MM/DD'
+DD/MM/YYYY'
+MM/DD/YYYY'
+```
 #### Nested Objets
 In case of `Object` or `Array`, `isArray` or `isObject` must be true
 if json structure is
