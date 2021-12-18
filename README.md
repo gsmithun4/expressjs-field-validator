@@ -1,8 +1,6 @@
 # expressjs-field-validator
 Request field validator for expressjs
 
-[![Dependency Status](https://david-dm.org/gsmithun4/expressjs-field-validator.svg)](https://david-dm.org/gsmithun4/expressjs-field-validator)
-[![Dev Dependency Status](https://status.david-dm.org/gh/gsmithun4/expressjs-field-validator.svg?type=dev)](https://david-dm.org/gsmithun4/expressjs-field-validator?type=dev)
 [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=gsmithun4_expressjs-field-validator&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=gsmithun4_expressjs-field-validator)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=gsmithun4_expressjs-field-validator&metric=bugs)](https://sonarcloud.io/dashboard?id=gsmithun4_expressjs-field-validator)
 [![code_smells](https://sonarcloud.io/api/project_badges/measure?project=gsmithun4_expressjs-field-validator&metric=code_smells)](https://sonarcloud.io/dashboard?id=gsmithun4_expressjs-field-validator)
