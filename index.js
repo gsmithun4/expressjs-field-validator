@@ -4,12 +4,14 @@ const {
   validateBody,
   validateParam,
   validateQuery,
+  validateHeader,
 } = require('./lib/queryBuilder');
 
 module.exports = { 
   validateBody,
   validateParam,
   validateQuery, 
+  validateHeader,
   checkService, 
   skipService
  };
