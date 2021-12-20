@@ -17,7 +17,7 @@
     "minify:index": "node-minify --compressor uglify-es --input 'index.js' --output 'index.js'",
     "test:coverage": "jest --coverage",
     "test:coverage-html": "jest --coverage --config='{ \"coverageReporters\": [\"html\", \"lcov\"] }'",
-    "minify": " &&  &&  "
+    "minify": "npm run minify:validator && npm run minify:check-service && npm run minify:skip-service && npm run minify:query-builder && npm run minify:index"
   },
   "keywords": [
     "request validation",
