@@ -300,12 +300,16 @@ Ends a validation definition
 {
   "field1": "Value", // String, Mandatory
   "field2": [ // array, Mandatory
-    { "field21": "44443" } // Number Optional
+    { "field21": "44443" }, // object Optional, number mandatory
+    { "field21": "44443" }
   ],
   "field3": { // Object Optional
-    { "field31": "true" }, // Boolean Mandatory
-    { "field32": "String" } // String Mandatory
-  }
+    "field31": "true", // Boolean Mandatory
+    "field32": "String" // String Mandatory
+  },
+  "field4": [ // array, Mandatory
+    123, 445, 3434 // Number Optional
+  ],
 }
 ```
 Should send http status code 500 in case of error
@@ -315,12 +319,17 @@ router.post('/users/:id',
 validateBody().isToBeRejected().sendErrorCode(500).addParams([
   param('field1').isRequired().end(),
   param('field2').isRequired().isArray().isRequired().addChild(
-    param('field21').isNumber().end()
+    param('field2-array').isObject().addChild( // field2-array is for tracking, you can give any name here
+      param('field21').isNumber().isRequired().end()
+    ).end()
   ).end(),
-  param('field3').isRequired().isObject().addChildren([
+  param('field3').isObject().addChildren([
     param('field31').isBoolean().isRequired().end(),
     param('field32').isRequired().end()
   ]).end(),
+  param('field4').isRequired().isArray().isRequired().addChild(
+    param('field4-array').isNumber().end()
+  ).end(),
 ]).done(),
 (req, res, next) => {
 
