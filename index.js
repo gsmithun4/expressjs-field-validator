@@ -1,5 +1,17 @@
-const validator = require('./lib/validator');
 const checkService = require('./lib/checkService');
 const skipService = require('./lib/skipService');
+const { 
+  validateBody,
+  validateParam,
+  validateQuery,
+  validateHeader,
+} = require('./lib/queryBuilder');
 
-module.exports = { validator, checkService, skipService };
+module.exports = { 
+  validateBody,
+  validateParam,
+  validateQuery, 
+  validateHeader,
+  checkService, 
+  skipService
+ };

@@ -1,8 +1,6 @@
 # expressjs-field-validator
 Request field validator for expressjs
 
-[![Dependency Status](https://david-dm.org/gsmithun4/expressjs-field-validator.svg)](https://david-dm.org/gsmithun4/expressjs-field-validator)
-[![Dev Dependency Status](https://status.david-dm.org/gh/gsmithun4/expressjs-field-validator.svg?type=dev)](https://david-dm.org/gsmithun4/expressjs-field-validator?type=dev)
 [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=gsmithun4_expressjs-field-validator&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=gsmithun4_expressjs-field-validator)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=gsmithun4_expressjs-field-validator&metric=bugs)](https://sonarcloud.io/dashboard?id=gsmithun4_expressjs-field-validator)
 [![code_smells](https://sonarcloud.io/api/project_badges/measure?project=gsmithun4_expressjs-field-validator&metric=code_smells)](https://sonarcloud.io/dashboard?id=gsmithun4_expressjs-field-validator)
@@ -20,21 +18,45 @@ Request field validator for expressjs
 <!-- **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)* -->
 
 - [Installation](#installation)
-- [Dependencies](#dependencies)
 - [How To Use](#how-to-use)
-- [validator arguments](#validator-arguments)
-  - [validator Object](#validator-object)
-    - [Nested Objets](#nested-objets)
-  - [Response object](#response-object)
-    - [Mode](#mode)
-      - [Reject](#reject)
-      - [Forward](#forward)
-    - [debug](#debug)
-- [checkService](#checkservice)
-  - [Usage](#usage)
-- [skipService](#skipservice)
-  - [Arguments](#arguments)
-  - [Usage](#usage-1)
+- [Getting Started](#getting-started)
+  - [Defining a Field](#defining-a-field)
+    - [Available Options](#available-options)
+      - [isRequired()](#isrequired)
+      - [isArray()](#isarray)
+      - [isObject()](#isobject)
+      - [isNumber()](#isnumber)
+      - [isEmail()](#isemail)
+      - [isBoolean()](#isboolean)
+      - [isDate()](#isdate)
+      - [dateFormat(format)](#dateformatformat)
+      - [minimumNumber(min)](#minimumnumbermin)
+      - [maximumNumber(max)](#maximumnumbermax)
+      - [minimumLength(min)](#minimumlengthmin)
+      - [maximumLength(max)](#maximumlengthmax)
+      - [shouldInclude(inclues)](#shouldincludeinclues)
+      - [shouldExclude(excludes)](#shouldexcludeexcludes)
+      - [isMobileNumberWithCountryCode(countryCode)](#ismobilenumberwithcountrycodecountrycode)
+      - [isMobileNumberWithCountryCodeMandatory()](#ismobilenumberwithcountrycodemandatory)
+      - [isMobileNumberWithMinimumLength(min)](#ismobilenumberwithminimumlengthmin)
+      - [isMobileNumberWithMaximumLength(max)](#ismobilenumberwithmaximumlengthmax)
+      - [addChild(child)](#addchildchild)
+      - [addChildren(children)](#addchildrenchildren)
+      - [sendErrorMessage(message)](#senderrormessagemessage)
+      - [end() :bangbang::bangbang: Mandatory](#end-bangbangbangbang-mandatory)
+  - [Creating a validation middleware](#creating-a-validation-middleware)
+    - [Available Options](#available-options-1)
+      - [isToBeRejected()](#istoberejected)
+      - [isToBeForwarded()](#istobeforwarded)
+        - [checkService](#checkservice)
+        - [skipService](#skipservice)
+      - [sendErrorCode(errorCode)](#senderrorcodeerrorcode)
+      - [debug(isDebugEnabled)](#debugisdebugenabled)
+      - [addParams(paramList)](#addparamsparamlist)
+      - [done() :bangbang::bangbang: Mandatory](#done-bangbangbangbang-mandatory)
+- [Dealing with nested objects](#dealing-with-nested-objects)
+  - [Request body](#request-body)
+  - [Validation](#validation)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -47,49 +69,58 @@ $ npm install expressjs-field-validator
 ## How To Use
 
 ```js
- const { validator } = require('expressjs-field-validator');
+ const { 
+  validateBody,
+  validateParam,
+  validateQuery,
+  param,
+} = require('expressjs-field-validator');
 ```
 ```js
-router.get('/users/:id',
-validator([{param : 'id', location : 'params', isRequired : true}], { mode : 'reject', errorCode : '422' }),
+router.post('/users/:id',
+validateParam().addParams([
+  param('id').isNumber().end()
+]).done(),
+validateBody().addParams([
+  param('userId').isNumber().end()
+]).done(),
+validateQuery().addParams([
+  param('userName').isRequired().end()
+]).done(),
+validateHeader().addParams([
+  param('Authorization').isRequired().end()
+]).done(),
 (req, res, next) => {
 
   // Main Service Here
 
 });
 ```
-## validator arguments
-
-| Argument        | Type      | Description
-|:---------------|:---------:|----------------------------|
-|validator	  |`Object[]`   |  Array of validation object |
-|Response	  |`Object`   |  This Object determines the proceeding to the next step |
-
-### validator Object
-
-
-| Property        | Type      | Description
-|:---------------|:---------|----------------------------|
-|param	  |`String`   | Field name|
-|location	  |`String`   | Location of the field (`body`/`params`/`query`) only mandatory for higher order objects (direclty under `body`/`params`/`query`) default `body` |
-|children	  |`Object[]`   |Array of Child validator objects, only applicable if the field is `Array` or `Object`  |
-|isArray	  |`Boolean`   |The value is `Array` or not (default `false`)|
-|isObject	  |`Boolean`   |The value is `Object` or not (default `false`)|
-|isRequired	  |`Boolean`   |The value is mandatory or not (default `false`)|
-|isNumber	  |`Boolean`   |The value is `Number` or not (default `false`)|
-|range	  |`Object`   |Object `{min : 1, max : 10}` describes minimum and maximum value of a Number field|
-|isEmail	  |`Boolean`   |The value is `Email` or not (default `false`)|
-|isBoolean	  |`Boolean`   |The value is `Boolean` or not (default `false`)|
-|isDate	  |`Boolean`   |The value is `Date` or not (default `false`)|
-|format	  |`String`   |Date format. (default `YYYY-MM-DD`)|
-|mobileNumber	  |`Object`   |Object `{countryCode : '91', isCountryCodeMandatory : true, length: {min : 1, max : 10}}` ,describes characteristics of mobile number, length is the length range of mobile number excluding country code |
-|length	  |`Object`   |Object `{min : 1, max : 10}` describes minimum and maximum length|
-|includes	  |`Object[]`   |Value must be one of the element in the array|
-|excludes	  |`Object[]`   |Value must not be one of the element in the array|
-|message	  |`String`   |Error message thrown in case of test fails default : Invalid Field Error|
-
-#### Supported date formats
-If `isDate` is true you can pass `format`, Only supported the following
+## Getting Started
+### Defining a Field
+Use `param(<field Name>)` to define a field. It should end with `end()`
+```js
+param('userName').isRequired().end()
+```
+Defines a field `userName` which is mandatory.
+#### Available Options
+##### isRequired()
+Field is mandatory
+##### isArray()
+Expects array
+##### isObject()
+Expects object
+##### isNumber()
+Expects number
+##### isEmail()
+Expects email
+##### isBoolean()
+Expects boolean value
+##### isDate()
+Expects a date with default format `YYYY-MM-DD`
+##### dateFormat(format)
+* `format` *Mandatory* String
+specify date format, supported
 ```
 YYYY-MM-DD
 DD-MM-YYYY'
@@ -98,51 +129,79 @@ YYYY/MM/DD'
 DD/MM/YYYY'
 MM/DD/YYYY'
 ```
-#### Nested Objets
-In case of `Object` or `Array`, `isArray` or `isObject` must be true
-if json structure is
+##### minimumNumber(min)
+* `min` *Mandatory* Number
+Expects number and must be greater than or equal to `min`
+##### maximumNumber(max)
+* `max` *Mandatory* Number
+Expects number and must be less than or equal to `max`
+##### minimumLength(min)
+* `min` *Mandatory* Number
+Expects number/string and length must be less than or equal to `min`
+##### maximumLength(max)
+* `max` *Mandatory* Number
+Expects number/string and length must be less than or equal to `max`
+##### shouldInclude(inclues)
+* `inclues` *Mandatory* Array
+Expects number/string and must be one of given array `includes`
+##### shouldExclude(excludes)
+* `excludes` *Mandatory* Array
+Expects number/string and must not be one of given array `excludes`
+##### isMobileNumberWithCountryCode(countryCode)
+* `countryCode` *Mandatory* String
+Expects mobile number with or without `countryCode`
+##### isMobileNumberWithCountryCodeMandatory()
+Expects mobile number which should starts with country code set at `isMobileNumberWithCountryCode`
+##### isMobileNumberWithMinimumLength(min)
+* `min` *Mandatory* Number
+Minimum length of mobile number without country code
+##### isMobileNumberWithMaximumLength(max)
+* `max` *Mandatory* Number
+Maximum length of mobile number without country code
+##### addChild(child)
+* `child` *Mandatory* field definition object
+Add a child object for arrays and objects
+##### addChildren(children)
+* `children` *Mandatory* Array of field definition objects
+Add a list of children objects for arrays and objects
+##### sendErrorMessage(message)
+* `message` *Mandatory* String
+Custom message to be send back in case of validation failure
 ```js
+// Default message
 {
-  "page" : {
-    "sorted" : "True"
-  },
-  "sort" : [{
-    "value" : [{
-	"date" : "2019-01-01",
-	"length" : {"min" : "1", "max" : "100"}
-    }]
-  }]
+    "error": [
+        {
+            "location": "body.sort",
+            "param": "sort",
+            "message": "Invalid Field Error"
+        }
+    ]
+}
+// Custom message
+{
+    "error": [
+        {
+            "location": "body.sort",
+            "param": "sort",
+            "message": "<Your Custom Error Message>"
+        }
+    ]
 }
 ```
-the validator object
-```js
-[
-  {param : 'page', location : 'body', isObject : true, children : [
-    {param : 'sorted', location : 'body.page', isRequired : true, isBoolean : true, message='Mandatory field page missing'},
-  ]},
-  {param : 'sort', location : 'body', isArray : true, children : [
-    {param : 'value', location : 'body.sort', isArray : true, children : [
-      {param : 'date', location : 'body.sort.value', isRequired : true, isDate : true},
-      {param : 'length', location : 'body.sort.value', isObject : true, children : [
-        {param : 'min', location : 'body.sort.value.length', isNumber : true},
-        {param : 'max', location : 'body.sort.value.length', isNumber : true}
-      ]}
-    ]}
-  ]}
- ]
-```
-### Response object
+##### end() :bangbang::bangbang: Mandatory
+Ends a param definition 
 
-| Property        | Type      | Description
-|:---------------|:---------|----------------------------|
-|mode	  |`String`   | can be `reject` or `forward`, Mandatory field|
-|errorCode	  |`String`   | Error code send in response. default `422` Error|
-|debug	  |`Boolean`   | set `true` to respond back more details on error |
+### Creating a validation middleware
+* `validateBody()` *Validate body*
+* `validateParam()` *Validate param*
+* `validateQuery()` *Validate query*
+* `validateHeader()` *Validate header*
 
-#### Mode
-Value can be can be `reject` or `forward`.
-##### Reject
-Response is sent back with http status code provided in `errorCode` property
+#### Available Options
+##### isToBeRejected()
+Defines the validation failure event - Server returns http status code set via `sendErrorCode` (default 422), :heavy_exclamation_mark: will not proceed to the next middleware
+Response body
 ```js
 {
     "error": [
@@ -154,40 +213,31 @@ Response is sent back with http status code provided in `errorCode` property
     ]
 }
 ```
-##### Forward
-Error is set to `request.locals.data` and error code to `request.locals.statusCode`. Forward the request to next middleware.
-
-#### debug
-If `debug` is set to `true`, error response will be
+##### isToBeForwarded()
+Defines the validation failure event - Error is set to `request.locals.data` and error code to `request.locals.statusCode`, :white_check_mark: will proceed to the next middleware
+Error object
+Response body
 ```js
 {
     "error": [
         {
             "location": "body.sort",
             "param": "sort",
-            "message": "Invalid Field Error :: somevalueforsort Must Be A Boolean"
+            "message": "Invalid Field Error"
         }
     ]
 }
 ```
-It will give more idea about the error.
-
-## checkService
+###### checkService
 ```js
- const { checkService } = require('expressjs-field-validator');
+  const { checkService } = require('expressjs-field-validator');
 ```
-
-It helps to skip the main service function, if you have used forward mode.
-### Usage
-Pass your service function to `checkService`, which must be skipped.
-```js
-checkService((req, resp, next) => {
-  
-})
-```
+Pass middleware to `checkService`, which must be skipped if `isToBeForwarded` enabled and validation errors are found
 ```js
 router.get('/users/:id',
-validator([{param : 'id', location : 'params', isRequired : true, isNumber: true}], { mode : 'forward' }),
+validateBody().isToBeForwarded().sendErrorCode(500).debug(false).addParams([
+  param('id').isRequired().isNumber().end()
+]).done(),
 checkService((req, res, next) => {
 
   // This middleware is skipped if id is empty or not a number
@@ -199,34 +249,82 @@ checkService((req, res, next) => {
   
 });
 ```
-
-## skipService
+###### skipService
+manually invoke forward mode, if this is set from any middleware, the middlewares wrapped inside `checkService` won't be executed
 ```js
  const { skipService } = require('expressjs-field-validator');
-
- skipService(req, 'SOME-ERROR');
 ```
-### Arguments
-| Property        | Type      | Description
-|:---------------|:---------|----------------------------|
-|req	  |`Object`   | Pass the request object|
-|statusCode	  |`String`   | Some status code to identify the error. Read the data from `request.locals.statusCode` |
-
-It helps to skip the main service function manually.
-### Usage
-Pass your service function to `checkService`, which must be skipped. Use `skipService` in the middleware which is added before the main service
 ```js
-[
-  (req, resp, next) => {
-    skipService(req, 'SOME-ERROR');
-    next();
-  },
-  checkService((req, resp, next) => {
-    // This will be skipped
-  }),
-  (req, resp, next) => {
-    // This will not be skipped
-  }
-]
-```
+router.get('/users/:id',
+(req, res, next) => {
 
+  skipService(req, 'SOME-ERROR');
+  next();
+  
+}),
+ 
+checkService((req, res, next) => {
+
+  // This middleware is skipped
+  
+}),
+(req, res, next) => {
+
+  // This middleware Will not be skipped, error data will be availble here - req.locals.data and status code - request.locals.statusCode here 
+  
+});
+```
+##### sendErrorCode(errorCode)
+* `errorCode` *Mandatory* Error code which should be rejected
+##### debug(isDebugEnabled)
+* `isDebugEnabled` *Mandatory* Pass `true` for development environments, the error object will contain more details about error
+Error object
+```js
+{
+    "error": [
+        {
+            "location": "body.sort",
+            "param": "sort",
+            "message": "Invalid Field Error :: somevalueforsort Must Be A Boolean" // More details on error
+        }
+    ]
+}
+```
+##### addParams(paramList)
+* `paramList` *Mandatory* Array of field definition objects
+##### done() :bangbang::bangbang: Mandatory
+Ends a validation definition
+## Dealing with nested objects
+### Request body
+```js
+{
+  "field1": "Value", // String, Mandatory
+  "field2": [ // array, Mandatory
+    { "field21": "44443" } // Number Optional
+  ],
+  "field3": { // Object Optional
+    { "field31": "true" }, // Boolean Mandatory
+    { "field32": "String" } // String Mandatory
+  }
+}
+```
+Should send http status code 500 in case of error
+### Validation
+```js
+router.post('/users/:id',
+validateBody().isToBeRejected().sendErrorCode(500).addParams([
+  param('field1').isRequired().end(),
+  param('field2').isRequired().isArray().isRequired().addChild(
+    param('field21').isNumber().end()
+  ).end(),
+  param('field3').isRequired().isObject().addChildren([
+    param('field31').isBoolean().isRequired().end(),
+    param('field32').isRequired().end()
+  ]).end(),
+]).done(),
+(req, res, next) => {
+
+  // Main Service Here
+
+});
+```
