@@ -9,3 +9,5 @@
 /lib/skipService/skipService.js
 /lib/skipService/skipService.test.js
 _config.yml
+.eslintrc.js
+sonar-project.properties
