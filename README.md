@@ -301,7 +301,7 @@ Ends a validation definition
   "field1": "Value", // String, Mandatory
   "field2": [ // array, Mandatory
     { "field21": "44443" } // Number Optional
-  ]
+  ],
   "field3": { // Object Optional
     { "field31": "true" } // Boolean Mandatory
     { "field32": "String" } // String Mandatory
