@@ -8,6 +8,8 @@
 /lib/checkService/checkService.test.js
 /lib/skipService/skipService.js
 /lib/skipService/skipService.test.js
+/lib/queryBuilder/queryBuilder.test.js
+/lib/queryBuilder/queryBuilder.test.js
 _config.yml
 .eslintrc.js
 sonar-project.properties
