@@ -123,11 +123,11 @@ Expects a date with default format `YYYY-MM-DD`
 specify date format, supported
 ```
 YYYY-MM-DD
-DD-MM-YYYY'
-MM-DD-YYYY'
-YYYY/MM/DD'
-DD/MM/YYYY'
-MM/DD/YYYY'
+DD-MM-YYYY
+MM-DD-YYYY
+YYYY/MM/DD
+DD/MM/YYYY
+MM/DD/YYYY
 ```
 ##### minimumNumber(min)
 * `min` *Mandatory* Number
@@ -151,13 +151,26 @@ Expects number/string and must not be one of given array `excludes`
 * `countryCode` *Mandatory* String
 Expects mobile number with or without `countryCode`
 ##### isMobileNumberWithCountryCodeMandatory()
-Expects mobile number which should starts with country code set at `isMobileNumberWithCountryCode`
+Expects mobile number which should starts with the country code set with `isMobileNumberWithCountryCode`
 ##### isMobileNumberWithMinimumLength(min)
 * `min` *Mandatory* Number
 Minimum length of mobile number without country code
 ##### isMobileNumberWithMaximumLength(max)
 * `max` *Mandatory* Number
 Maximum length of mobile number without country code
+##### customValidator(function)
+* `function` *Mandatory* Function
+A function with arguments (`value`, `req`, `error`)
+`value` is the value of the field
+`req` request object
+`error` function with takes error message, should be called on error
+```js
+(value, req, error) => {
+  if (value !== 100) {
+    error('Invalid value customValidator');
+  }
+}
+```
 ##### addChild(child)
 * `child` *Mandatory* field definition object
 Add a child object for arrays and objects
@@ -292,6 +305,13 @@ Error object
 ```
 ##### addParams(paramList)
 * `paramList` *Mandatory* Array of field definition objects
+```js
+validateBody().addParams([
+  // Add List of definition here
+  param('field1').isRequired().end(),
+]).done()
+```
+Definintion of a field here : [Defining a Field](#defining-a-field)
 ##### done() :bangbang::bangbang: Mandatory
 Ends a validation definition
 ## Dealing with nested objects
@@ -317,7 +337,7 @@ Should send http status code 500 in case of error
 ```js
 router.post('/users/:id',
 validateBody().isToBeRejected().sendErrorCode(500).addParams([
-  param('field1').isRequired().end(),
+  param('field1').isRequired().end(), // Use end() to end a definition
   param('field2').isRequired().isArray().isRequired().addChild(
     param('field2-array').isObject().addChild( // field2-array is for tracking, you can give any name here
       param('field21').isNumber().isRequired().end()
@@ -330,7 +350,12 @@ validateBody().isToBeRejected().sendErrorCode(500).addParams([
   param('field4').isRequired().isArray().isRequired().addChild(
     param('field4-array').isNumber().end()
   ).end(),
-]).done(),
+]).done(), // Use done() to end a validation
+validateParam().isToBeRejected().sendErrorCode(500).addParams([
+  param('field1').isRequired().end(), // Use end() to end a definition
+]).done(), // Use done() to end a validation
+// define validateQuery(), 
+// define validateHeader(),
 (req, res, next) => {
 
   // Main Service Here
