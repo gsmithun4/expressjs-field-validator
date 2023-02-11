@@ -35,7 +35,7 @@
   "author": "Midhun G S",
   "license": "MIT",
   "devDependencies": {
-    "@node-minify/cli": "^6.2.0",
+    "@node-minify/cli": "^7.1.0",
     "@node-minify/uglify-es": "^6.2.0",
     "eslint": "^7.12.1",
     "eslint-plugin-import": "^2.25.3",
