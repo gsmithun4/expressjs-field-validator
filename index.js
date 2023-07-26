@@ -5,6 +5,7 @@ const {
   validateParam,
   validateQuery,
   validateHeader,
+  param,
 } = require('./lib/queryBuilder');
 
 module.exports = { 
@@ -12,6 +13,7 @@ module.exports = {
   validateParam,
   validateQuery, 
   validateHeader,
+  param,
   checkService, 
   skipService
  };
