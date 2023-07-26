@@ -1,6 +1,6 @@
 {
   "name": "expressjs-field-validator",
-  "version": "3.0.4",
+  "version": "3.0.5",
   "description": "Plugin for validating field values of json request in expressjs",
   "homepage": "https://gsmithun4.github.io/expressjs-field-validator",
   "repository": {
@@ -35,14 +35,14 @@
   "author": "Midhun G S",
   "license": "MIT",
   "devDependencies": {
-    "@node-minify/cli": "^6.2.0",
-    "@node-minify/uglify-es": "^6.2.0",
-    "eslint": "^7.12.1",
-    "eslint-plugin-import": "^2.25.3",
-    "jest": "^27.4.5"
+    "@node-minify/cli": "^8.0.6",
+    "@node-minify/uglify-es": "^8.0.6",
+    "eslint": "^8.45.0",
+    "eslint-plugin-import": "^2.27.5",
+    "jest": "^29.6.1"
   },
   "engines": {
-    "node": "16.13.1",
-    "npm": "8.1.2"
+    "node": "18.3.0",
+    "npm": "8.11.0"
   }
 }
