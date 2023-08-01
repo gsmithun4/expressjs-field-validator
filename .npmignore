@@ -1,6 +1,7 @@
 .git
 /node_modules
 /example
+/coverage
 /.github
 /lib/validator/validator.js
 /lib/validator/validator.test.js
