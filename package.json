@@ -10,11 +10,11 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "minify:validator": "node-minify --compressor uglify-es --input './lib/validator/validator.js' --output './lib/validator/index.js'",
-    "minify:check-service": "node-minify --compressor uglify-es --input './lib/checkService/checkService.js' --output './lib/checkService/index.js'",
-    "minify:skip-service": "node-minify --compressor uglify-es --input './lib/skipService/skipService.js' --output './lib/skipService/index.js'",
-    "minify:query-builder": "node-minify --compressor uglify-es --input './lib/queryBuilder/queryBuilder.js' --output './lib/queryBuilder/index.js'",
-    "minify:index": "node-minify --compressor uglify-es --input 'index.js' --output 'index.js'",
+    "minify:validator": "node-minify --compressor uglify-js --input './lib/validator/validator.js' --output './lib/validator/index.js'",
+    "minify:check-service": "node-minify --compressor uglify-js --input './lib/checkService/checkService.js' --output './lib/checkService/index.js'",
+    "minify:skip-service": "node-minify --compressor uglify-js --input './lib/skipService/skipService.js' --output './lib/skipService/index.js'",
+    "minify:query-builder": "node-minify --compressor uglify-js --input './lib/queryBuilder/queryBuilder.js' --output './lib/queryBuilder/index.js'",
+    "minify:index": "node-minify --compressor uglify-js --input 'index.js' --output 'index.js'",
     "test:coverage": "jest --coverage",
     "test:coverage-html": "jest --coverage --config='{ \"coverageReporters\": [\"html\", \"lcov\"] }'",
     "minify": "npm run minify:validator && npm run minify:check-service && npm run minify:skip-service && npm run minify:query-builder && npm run minify:index"
@@ -35,14 +35,14 @@
   "author": "Midhun G S",
   "license": "MIT",
   "devDependencies": {
-    "@node-minify/cli": "^8.0.6",
-    "@node-minify/uglify-es": "^8.0.6",
-    "eslint": "^8.45.0",
-    "eslint-plugin-import": "^2.27.5",
-    "jest": "^29.6.1"
+    "@node-minify/cli": "^10.4.0",
+    "@node-minify/uglify-js": "^10.4.0",
+    "eslint": "^9.0.0",
+    "eslint-plugin-import": "^2.32.0",
+    "jest": "^30.2.0"
   },
   "engines": {
-    "node": "18.3.0",
-    "npm": "8.11.0"
+    "node": "24.14.0",
+    "npm": "11.11.0"
   }
 }
