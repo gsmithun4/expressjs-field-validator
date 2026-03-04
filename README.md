@@ -43,6 +43,7 @@ Request field validator for expressjs
       - [addChild(child)](#addchildchild)
       - [addChildren(children)](#addchildrenchildren)
       - [sendErrorMessage(message)](#senderrormessagemessage)
+      - [convertToFormat(format)](#converttoformatformat)
       - [defaultValue(value)](#defaultvaluevalue)
       - [removeIfEmpty()](#removeifempty)
   - [Creating a validation middleware](#creating-a-validation-middleware)
@@ -57,6 +58,10 @@ Request field validator for expressjs
 - [Dealing with nested objects](#dealing-with-nested-objects)
   - [Request body](#request-body)
   - [Validation](#validation)
+- [Migration Guide](#migration-guide)
+  - [Migrating from v3.x to v4.x](#migrating-from-v3x-to-v4x)
+    - [Breaking Changes](#breaking-changes)
+    - [New Features](#new-features)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -128,6 +133,31 @@ MM-DD-YYYY
 YYYY/MM/DD
 DD/MM/YYYY
 MM/DD/YYYY
+```
+##### convertToFormat(format)
+* `format` *Mandatory* String
+Converts a validated date value to the specified format. Must be used with `isDate()`. The source format is determined by `dateFormat()` (defaults to `YYYY-MM-DD` if not set).
+
+Supported formats are the same as `dateFormat`:
+```
+YYYY-MM-DD
+DD-MM-YYYY
+MM-DD-YYYY
+YYYY/MM/DD
+DD/MM/YYYY
+MM/DD/YYYY
+```
+
+If the specified format is not in the supported list, the conversion is silently skipped and the original value is preserved.
+
+```js
+// Convert DD/MM/YYYY input to YYYY-MM-DD
+param('birthDate').isDate().dateFormat('DD/MM/YYYY').convertToFormat('YYYY-MM-DD')
+// Input: "25/12/2024" → Value after validation: "2024-12-25"
+
+// Convert with default source format (YYYY-MM-DD) to DD-MM-YYYY
+param('eventDate').isDate().convertToFormat('DD-MM-YYYY')
+// Input: "2024-12-25" → Value after validation: "25-12-2024"
 ```
 ##### minimumNumber(min)
 * `min` *Mandatory* Number
@@ -377,4 +407,104 @@ validateParam().isToBeRejected().sendErrorCode(500).addParams([
   // Main Service Here
 
 });
+```
+
+## Migration Guide
+
+### Migrating from v3.x to v4.x
+
+#### Breaking Changes
+
+##### 1. `end()` removed from field definitions
+
+`end()` is no longer required (or available) when defining fields with `param()`.
+
+```diff
+- param('userName').isRequired().end()
++ param('userName').isRequired()
+```
+
+```diff
+- param('field21').isNumber().isRequired().end()
++ param('field21').isNumber().isRequired()
+```
+
+##### 2. `done()` removed from validation middleware
+
+`done()` is no longer required (or available) when creating validation middleware.
+
+```diff
+- validateBody().addParams([
+-   param('field1').isRequired().end(),
+- ]).done()
++ validateBody().addParams([
++   param('field1').isRequired(),
++ ])
+```
+
+```diff
+- validateParam().isToBeRejected().sendErrorCode(500).addParams([
+-   param('id').isNumber().end(),
+- ]).done()
++ validateParam().isToBeRejected().sendErrorCode(500).addParams([
++   param('id').isNumber(),
++ ])
+```
+
+##### Full Before / After Example
+
+**v3.x**
+```js
+router.post('/users/:id',
+validateParam().addParams([
+  param('id').isNumber().end()
+]).done(),
+validateBody().isToBeRejected().sendErrorCode(500).addParams([
+  param('name').isRequired().end(),
+  param('email').isEmail().end(),
+  param('role').shouldInclude(['admin', 'user']).end(),
+]).done(),
+(req, res, next) => {
+  // Main Service
+});
+```
+
+**v4.x**
+```js
+router.post('/users/:id',
+validateParam().addParams([
+  param('id').isNumber()
+]),
+validateBody().isToBeRejected().sendErrorCode(500).addParams([
+  param('name').isRequired(),
+  param('email').isEmail(),
+  param('role').shouldInclude(['admin', 'user']),
+]),
+(req, res, next) => {
+  // Main Service
+});
+```
+
+#### New Features
+
+The following features are new in v4.x:
+
+##### `defaultValue(value)`
+Sets a default value for a field when the value is `undefined`, `null`, or `''`.
+```js
+param('status').defaultValue('active')
+param('count').isNumber().defaultValue(0)
+```
+
+##### `removeIfEmpty()`
+Removes the field key from the request if the value is empty.
+```js
+param('notes').removeIfEmpty()
+param('tags').isArray().removeIfEmpty()
+```
+
+##### `convertToFormat(format)`
+Converts a validated date to a different format. The original value in the request is replaced with the converted value.
+```js
+param('birthDate').isDate().dateFormat('DD/MM/YYYY').convertToFormat('YYYY-MM-DD')
 ```
