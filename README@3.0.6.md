@@ -10,7 +10,6 @@ Request field validator for expressjs
 [![sqale_rating](https://sonarcloud.io/api/project_badges/measure?project=gsmithun4_expressjs-field-validator&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=gsmithun4_expressjs-field-validator)
 [![alert_status](https://sonarcloud.io/api/project_badges/measure?project=gsmithun4_expressjs-field-validator&metric=alert_status)](https://sonarcloud.io/dashboard?id=gsmithun4_expressjs-field-validator)
 [![security_rating](https://sonarcloud.io/api/project_badges/measure?project=gsmithun4_expressjs-field-validator&metric=security_rating)](https://sonarcloud.io/dashboard?id=gsmithun4_expressjs-field-validator)
-[![security_rating](https://sonarcloud.io/api/project_badges/measure?project=gsmithun4_expressjs-field-validator&metric=security_rating)](https://sonarcloud.io/dashboard?id=gsmithun4_expressjs-field-validator)
 [![sqale_index](https://sonarcloud.io/api/project_badges/measure?project=gsmithun4_expressjs-field-validator&metric=sqale_index)](https://sonarcloud.io/dashboard?id=gsmithun4_expressjs-field-validator)
 [![vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=gsmithun4_expressjs-field-validator&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=gsmithun4_expressjs-field-validator)
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
@@ -43,9 +42,7 @@ Request field validator for expressjs
       - [addChild(child)](#addchildchild)
       - [addChildren(children)](#addchildrenchildren)
       - [sendErrorMessage(message)](#senderrormessagemessage)
-      - [convertToFormat(format)](#converttoformatformat)
-      - [defaultValue(value)](#defaultvaluevalue)
-      - [removeIfEmpty()](#removeifempty)
+      - [end() :bangbang::bangbang: Mandatory](#end-bangbangbangbang-mandatory)
   - [Creating a validation middleware](#creating-a-validation-middleware)
     - [Available Options](#available-options-1)
       - [isToBeRejected()](#istoberejected)
@@ -55,13 +52,10 @@ Request field validator for expressjs
       - [sendErrorCode(errorCode)](#senderrorcodeerrorcode)
       - [debug(isDebugEnabled)](#debugisdebugenabled)
       - [addParams(paramList)](#addparamsparamlist)
+      - [done() :bangbang::bangbang: Mandatory](#done-bangbangbangbang-mandatory)
 - [Dealing with nested objects](#dealing-with-nested-objects)
   - [Request body](#request-body)
   - [Validation](#validation)
-- [Migration Guide](#migration-guide)
-  - [Migrating from v3.x to v4.x](#migrating-from-v3x-to-v4x)
-    - [Breaking Changes](#breaking-changes)
-    - [New Features](#new-features)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -84,17 +78,17 @@ $ npm install expressjs-field-validator
 ```js
 router.post('/users/:id',
 validateParam().addParams([
-  param('id').isNumber()
-]),
+  param('id').isNumber().end()
+]).done(),
 validateBody().addParams([
-  param('userId').isNumber()
-]),
+  param('userId').isNumber().end()
+]).done(),
 validateQuery().addParams([
-  param('userName').isRequired()
-]),
+  param('userName').isRequired().end()
+]).done(),
 validateHeader().addParams([
-  param('Authorization').isRequired()
-]),
+  param('Authorization').isRequired().end()
+]).done(),
 (req, res, next) => {
 
   // Main Service Here
@@ -103,9 +97,9 @@ validateHeader().addParams([
 ```
 ## Getting Started
 ### Defining a Field
-Use `param(<field Name>)` to define a field.
+Use `param(<field Name>)` to define a field. It should end with `end()`
 ```js
-param('userName').isRequired()
+param('userName').isRequired().end()
 ```
 Defines a field `userName` which is mandatory.
 #### Available Options
@@ -133,31 +127,6 @@ MM-DD-YYYY
 YYYY/MM/DD
 DD/MM/YYYY
 MM/DD/YYYY
-```
-##### convertToFormat(format)
-* `format` *Mandatory* String
-Converts a validated date value to the specified format. Must be used with `isDate()`. The source format is determined by `dateFormat()` (defaults to `YYYY-MM-DD` if not set).
-
-Supported formats are the same as `dateFormat`:
-```
-YYYY-MM-DD
-DD-MM-YYYY
-MM-DD-YYYY
-YYYY/MM/DD
-DD/MM/YYYY
-MM/DD/YYYY
-```
-
-If the specified format is not in the supported list, the conversion is silently skipped and the original value is preserved.
-
-```js
-// Convert DD/MM/YYYY input to YYYY-MM-DD
-param('birthDate').isDate().dateFormat('DD/MM/YYYY').convertToFormat('YYYY-MM-DD')
-// Input: "25/12/2024" → Value after validation: "2024-12-25"
-
-// Convert with default source format (YYYY-MM-DD) to DD-MM-YYYY
-param('eventDate').isDate().convertToFormat('DD-MM-YYYY')
-// Input: "2024-12-25" → Value after validation: "25-12-2024"
 ```
 ##### minimumNumber(min)
 * `min` *Mandatory* Number
@@ -232,27 +201,9 @@ Custom message to be send back in case of validation failure
     ]
 }
 ```
-##### defaultValue(value)
-* `value` *Mandatory* Any value (non-array, non-object)
-Sets a default value for the field when the current value is `undefined`, `null`, or `''` (empty string). Only applies to fields that are not arrays or objects.
-```js
-param('status').defaultValue('active')
-param('count').isNumber().defaultValue(0)
-```
-##### removeIfEmpty()
-Removes the field key from the request if the value is considered empty.
-* For arrays: removes if `[]`
-* For objects: removes if `{}`
-* For other fields: removes if `undefined`, `null`, or `''`
-```js
-param('status').removeIfEmpty()
-param('items').isArray().removeIfEmpty()
-param('meta').isObject().removeIfEmpty()
-```
-> **Note:** When both `defaultValue` and `removeIfEmpty` are used together, `defaultValue` is applied first. If the default value is non-empty, the field is kept.
-```js
-param('status').defaultValue('active').removeIfEmpty() // field is kept with value 'active'
-```
+##### end() :bangbang::bangbang: Mandatory
+Ends a param definition 
+
 ### Creating a validation middleware
 * `validateBody()` *Validate body*
 * `validateParam()` *Validate param*
@@ -297,8 +248,8 @@ Pass middleware to `checkService`, which must be skipped if `isToBeForwarded` en
 ```js
 router.get('/users/:id',
 validateBody().isToBeForwarded().sendErrorCode(500).debug(false).addParams([
-  param('id').isRequired().isNumber()
-]),
+  param('id').isRequired().isNumber().end()
+]).done(),
 checkService((req, res, next) => {
 
   // This middleware is skipped if id is empty or not a number
@@ -356,10 +307,12 @@ Error object
 ```js
 validateBody().addParams([
   // Add List of definition here
-  param('field1').isRequired(),
-])
+  param('field1').isRequired().end(),
+]).done()
 ```
 Definintion of a field here : [Defining a Field](#defining-a-field)
+##### done() :bangbang::bangbang: Mandatory
+Ends a validation definition
 ## Dealing with nested objects
 ### Request body
 ```js
@@ -383,23 +336,23 @@ Should send http status code 500 in case of error
 ```js
 router.post('/users/:id',
 validateBody().isToBeRejected().sendErrorCode(500).addParams([
-  param('field1').isRequired(),
+  param('field1').isRequired().end(), // Use end() to end a definition
   param('field2').isRequired().isArray().isRequired().addChild(
     param('field2-array').isObject().addChild( // field2-array is for tracking, you can give any name here
-      param('field21').isNumber().isRequired()
-    )
-  ),
+      param('field21').isNumber().isRequired().end()
+    ).end()
+  ).end(),
   param('field3').isObject().addChildren([
-    param('field31').isBoolean().isRequired(),
-    param('field32').isRequired()
-  ]),
+    param('field31').isBoolean().isRequired().end(),
+    param('field32').isRequired().end()
+  ]).end(),
   param('field4').isRequired().isArray().isRequired().addChild(
-    param('field4-array').isNumber()
-  ),
-]),
+    param('field4-array').isNumber().end()
+  ).end(),
+]).done(), // Use done() to end a validation
 validateParam().isToBeRejected().sendErrorCode(500).addParams([
-  param('field1').isRequired(),
-]),
+  param('field1').isRequired().end(), // Use end() to end a definition
+]).done(), // Use done() to end a validation
 // define validateQuery(), 
 // define validateHeader(),
 (req, res, next) => {
@@ -407,104 +360,4 @@ validateParam().isToBeRejected().sendErrorCode(500).addParams([
   // Main Service Here
 
 });
-```
-
-## Migration Guide
-
-### Migrating from v3.x to v4.x
-
-#### Breaking Changes
-
-##### 1. `end()` removed from field definitions
-
-`end()` is no longer required (or available) when defining fields with `param()`.
-
-```diff
-- param('userName').isRequired().end()
-+ param('userName').isRequired()
-```
-
-```diff
-- param('field21').isNumber().isRequired().end()
-+ param('field21').isNumber().isRequired()
-```
-
-##### 2. `done()` removed from validation middleware
-
-`done()` is no longer required (or available) when creating validation middleware.
-
-```diff
-- validateBody().addParams([
--   param('field1').isRequired().end(),
-- ]).done()
-+ validateBody().addParams([
-+   param('field1').isRequired(),
-+ ])
-```
-
-```diff
-- validateParam().isToBeRejected().sendErrorCode(500).addParams([
--   param('id').isNumber().end(),
-- ]).done()
-+ validateParam().isToBeRejected().sendErrorCode(500).addParams([
-+   param('id').isNumber(),
-+ ])
-```
-
-##### Full Before / After Example
-
-**v3.x**
-```js
-router.post('/users/:id',
-validateParam().addParams([
-  param('id').isNumber().end()
-]).done(),
-validateBody().isToBeRejected().sendErrorCode(500).addParams([
-  param('name').isRequired().end(),
-  param('email').isEmail().end(),
-  param('role').shouldInclude(['admin', 'user']).end(),
-]).done(),
-(req, res, next) => {
-  // Main Service
-});
-```
-
-**v4.x**
-```js
-router.post('/users/:id',
-validateParam().addParams([
-  param('id').isNumber()
-]),
-validateBody().isToBeRejected().sendErrorCode(500).addParams([
-  param('name').isRequired(),
-  param('email').isEmail(),
-  param('role').shouldInclude(['admin', 'user']),
-]),
-(req, res, next) => {
-  // Main Service
-});
-```
-
-#### New Features
-
-The following features are new in v4.x:
-
-##### `defaultValue(value)`
-Sets a default value for a field when the value is `undefined`, `null`, or `''`.
-```js
-param('status').defaultValue('active')
-param('count').isNumber().defaultValue(0)
-```
-
-##### `removeIfEmpty()`
-Removes the field key from the request if the value is empty.
-```js
-param('notes').removeIfEmpty()
-param('tags').isArray().removeIfEmpty()
-```
-
-##### `convertToFormat(format)`
-Converts a validated date to a different format. The original value in the request is replaced with the converted value.
-```js
-param('birthDate').isDate().dateFormat('DD/MM/YYYY').convertToFormat('YYYY-MM-DD')
 ```
