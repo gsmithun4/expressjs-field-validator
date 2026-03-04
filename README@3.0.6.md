@@ -10,7 +10,6 @@ Request field validator for expressjs
 [![sqale_rating](https://sonarcloud.io/api/project_badges/measure?project=gsmithun4_expressjs-field-validator&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=gsmithun4_expressjs-field-validator)
 [![alert_status](https://sonarcloud.io/api/project_badges/measure?project=gsmithun4_expressjs-field-validator&metric=alert_status)](https://sonarcloud.io/dashboard?id=gsmithun4_expressjs-field-validator)
 [![security_rating](https://sonarcloud.io/api/project_badges/measure?project=gsmithun4_expressjs-field-validator&metric=security_rating)](https://sonarcloud.io/dashboard?id=gsmithun4_expressjs-field-validator)
-[![security_rating](https://sonarcloud.io/api/project_badges/measure?project=gsmithun4_expressjs-field-validator&metric=security_rating)](https://sonarcloud.io/dashboard?id=gsmithun4_expressjs-field-validator)
 [![sqale_index](https://sonarcloud.io/api/project_badges/measure?project=gsmithun4_expressjs-field-validator&metric=sqale_index)](https://sonarcloud.io/dashboard?id=gsmithun4_expressjs-field-validator)
 [![vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=gsmithun4_expressjs-field-validator&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=gsmithun4_expressjs-field-validator)
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
