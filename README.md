@@ -29,6 +29,7 @@ Request field validator for expressjs
       - [isObject()](#isobject)
       - [isNumber()](#isnumber)
       - [isEmail()](#isemail)
+      - [isUUID()](#isuuid)
       - [isBoolean()](#isboolean)
       - [isDate()](#isdate)
       - [dateFormat(format)](#dateformatformat)
@@ -125,6 +126,8 @@ Expects object
 Expects number
 ##### isEmail()
 Expects email
+##### isUUID()
+Expects UUID string
 ##### isBoolean()
 Expects boolean value
 ##### isDate()
