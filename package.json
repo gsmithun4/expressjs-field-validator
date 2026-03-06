@@ -1,6 +1,6 @@
 {
   "name": "expressjs-field-validator",
-  "version": "4.0.4",
+  "version": "4.0.5",
   "description": "Plugin for validating field values of json request in expressjs",
   "homepage": "https://gsmithun4.github.io/expressjs-field-validator",
   "repository": {
@@ -16,7 +16,7 @@
     "minify:skip-service": "node-minify --compressor uglify-js --input './lib/skipService/skipService.js' --output './lib/skipService/index.js'",
     "minify:query-builder": "node-minify --compressor uglify-js --input './lib/queryBuilder/queryBuilder.js' --output './lib/queryBuilder/index.js'",
     "minify:response-doc": "node-minify --compressor uglify-js --input './lib/responseDoc/responseDoc.js' --output './lib/responseDoc/index.js'",
-    "minify:docs-generator": "node-minify --compressor uglify-js --input './lib/docsGenerator/docsGenerator.js' --output './lib/docsGenerator/index.js'",
+    "minify:docs-generator": "node-minify --compressor uglify-js --input './lib/docGenerator/docGenerator.js' --output './lib/docGenerator/index.js'",
     "minify:index": "node-minify --compressor uglify-js --input 'index.js' --output 'index.js'",
     "test:coverage": "jest --coverage",
     "test:coverage-html": "jest --coverage --config='{ \"coverageReporters\": [\"html\", \"lcov\"] }'",
