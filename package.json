@@ -1,6 +1,6 @@
 {
   "name": "expressjs-field-validator",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "description": "Plugin for validating field values of json request in expressjs",
   "homepage": "https://gsmithun4.github.io/expressjs-field-validator",
   "repository": {
@@ -8,6 +8,7 @@
     "url": "https://github.com/gsmithun4/expressjs-field-validator.git"
   },
   "main": "index.js",
+  "types": "index.d.ts",
   "scripts": {
     "test": "jest",
     "minify:validator": "node-minify --compressor uglify-js --input './lib/validator/validator.js' --output './lib/validator/index.js'",
