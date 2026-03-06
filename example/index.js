@@ -6,7 +6,9 @@ const {
   validateHeader,
   param,
   checkService,
-} = require('expressjs-field-validator');
+  generateDocs,
+  documentResponse,
+} = require('../index.example.js');
 
 const app = express();
 app.use(express.urlencoded({ extended: true }));
@@ -19,6 +21,16 @@ app.post('/users',
     param('name').isRequired(),
     param('email').isRequired().isEmail(),
   ]),
+  documentResponse({
+    201: {
+      description: 'User created successfully',
+      body: { message: 'User created', data: { id: 1, name: 'John', email: 'john@example.com' } }
+    },
+    422: {
+      description: 'Validation failed',
+      body: { error: 'email is required' }
+    }
+  }),
   (req, res) => {
     res.status(201).send({ message: 'User created', data: req.body });
   }
@@ -32,6 +44,17 @@ app.post('/products',
     param('price').isRequired().isNumber().minimumNumber(1).maximumNumber(99999),
     param('sku').isRequired().minimumLength(3).maximumLength(20),
   ]),
+  documentResponse({
+    201: {
+      description: 'Product created',
+      body: { message: 'Product created', data: { title: 'Widget', price: 25, sku: 'AB123' } },
+      headers: { 'X-Product-Id': '12345' }
+    },
+    422: {
+      description: 'Validation error',
+      body: { error: 'price must be between 1 and 99999' }
+    }
+  }),
   (req, res) => {
     res.status(201).send({ message: 'Product created', data: req.body });
   }
@@ -277,11 +300,22 @@ app.post('/feedback',
 );
 
 // ─── Start server ────────────────────────────────────────────────────────────
-const PORT = 5000;
+const PORT = 3000;
+
+// ─── Generate API documentation ──────────────────────────────────────────────
+// This must be called AFTER all routes are registered
+generateDocs(app, {
+  title: 'Example API',
+  version: '1.0.0',
+  outputDir: './docs',
+  filename: 'api-docs.html'
+});
+
 app.listen(PORT, (err) => {
   if (err) {
     console.error(`Error starting server: ${err}`);
     return;
   }
   console.log(`Server is listening on http://localhost:${PORT}`);
+  console.log(`API Docs available at: ./docs/api-docs.html`);
 });

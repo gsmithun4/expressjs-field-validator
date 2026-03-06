@@ -15,10 +15,12 @@
     "minify:check-service": "node-minify --compressor uglify-js --input './lib/checkService/checkService.js' --output './lib/checkService/index.js'",
     "minify:skip-service": "node-minify --compressor uglify-js --input './lib/skipService/skipService.js' --output './lib/skipService/index.js'",
     "minify:query-builder": "node-minify --compressor uglify-js --input './lib/queryBuilder/queryBuilder.js' --output './lib/queryBuilder/index.js'",
+    "minify:response-doc": "node-minify --compressor uglify-js --input './lib/responseDoc/responseDoc.js' --output './lib/responseDoc/index.js'",
+    "minify:docs-generator": "node-minify --compressor uglify-js --input './lib/docsGenerator/docsGenerator.js' --output './lib/docsGenerator/index.js'",
     "minify:index": "node-minify --compressor uglify-js --input 'index.js' --output 'index.js'",
     "test:coverage": "jest --coverage",
     "test:coverage-html": "jest --coverage --config='{ \"coverageReporters\": [\"html\", \"lcov\"] }'",
-    "minify": "npm run minify:validator && npm run minify:check-service && npm run minify:skip-service && npm run minify:query-builder && npm run minify:index"
+    "minify": "npm run minify:validator && npm run minify:check-service && npm run minify:skip-service && npm run minify:query-builder && npm run minify:response-doc && npm run minify:docs-generator && npm run minify:index"
   },
   "keywords": [
     "request validation",

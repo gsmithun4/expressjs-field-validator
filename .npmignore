@@ -9,9 +9,16 @@
 /lib/checkService/checkService.test.js
 /lib/skipService/skipService.js
 /lib/skipService/skipService.test.js
+/lib/queryBuilder/queryBuilder.js
 /lib/queryBuilder/queryBuilder.test.js
-/lib/queryBuilder/queryBuilder.test.js
+/lib/docGenerator/docGenerator.js
+/lib/docGenerator/docGenerator.test.js
+/lib/responseDoc/responseDoc.js
+/lib/responseDoc/responseDoc.test.js
+/config-builder
+index.example.js
 _config.yml
 .eslintrc.js
 sonar-project.properties
 README@2.3.0.md
+README@3.0.6.md
