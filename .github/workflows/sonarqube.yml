@@ -36,7 +36,7 @@ jobs:
       - run: npm ci
       - run: npm run test:coverage
       - name: SonarCloud Scan
-        uses: sonarsource/sonarqube-scan-action@master  # ✅ replaces deprecated action
+        uses: sonarsource/sonarqube-scan-action@v2  # ✅ pinned to a stable release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
