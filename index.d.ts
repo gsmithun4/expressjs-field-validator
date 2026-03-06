@@ -165,6 +165,12 @@ export interface ValidationConfig {
    */
   removeIfEmpty(): ValidationConfig;
   /**
+   * Remove any keys from the request that are not declared in the validation params.
+   * This sanitizes the input to only include explicitly defined fields.
+   * Works recursively on nested objects and arrays.
+   */
+  cleanUp(): ValidationConfig;
+  /**
    * Add the list of field definitions and return the Express middleware.
    * @param paramList - An array of `ParamBuilder` field definitions.
    * @returns Express middleware function.

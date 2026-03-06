@@ -1,0 +1,1202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>expressjs-field-validator Config Builder</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background: #1a1a2e;
+      color: #eee;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 10px;
+      color: #4fc3f7;
+    }
+    .subtitle {
+      text-align: center;
+      color: #888;
+      margin-bottom: 30px;
+    }
+    .panels {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    @media (max-width: 900px) {
+      .panels {
+        grid-template-columns: 1fr;
+      }
+    }
+    .panel {
+      background: #16213e;
+      border-radius: 10px;
+      padding: 20px;
+    }
+    .panel h2 {
+      color: #4fc3f7;
+      margin-bottom: 15px;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .json-input-wrapper {
+      position: relative;
+    }
+    .json-input-wrapper.drag-over textarea {
+      border-color: #4fc3f7;
+      background: rgba(79, 195, 247, 0.1);
+    }
+    .drag-overlay {
+      display: none;
+      position: absolute;
+      inset: 0;
+      background: rgba(79, 195, 247, 0.2);
+      border: 2px dashed #4fc3f7;
+      border-radius: 8px;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      color: #4fc3f7;
+      pointer-events: none;
+    }
+    .json-input-wrapper.drag-over .drag-overlay {
+      display: flex;
+    }
+    textarea {
+      width: 100%;
+      height: 200px;
+      background: #0f0f23;
+      border: 1px solid #333;
+      border-radius: 8px;
+      color: #eee;
+      font-family: 'Fira Code', 'Monaco', monospace;
+      font-size: 13px;
+      padding: 15px;
+      resize: vertical;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    textarea:focus {
+      outline: none;
+      border-color: #4fc3f7;
+    }
+    .btn {
+      background: #4fc3f7;
+      color: #1a1a2e;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn:hover {
+      background: #81d4fa;
+      transform: translateY(-1px);
+    }
+    .btn:active {
+      transform: translateY(0);
+    }
+    .btn.loading::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: inherit;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .btn-secondary {
+      background: #333;
+      color: #eee;
+    }
+    .btn-secondary:hover {
+      background: #444;
+    }
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+      flex-wrap: wrap;
+    }
+    .fields-container {
+      max-height: 500px;
+      overflow-y: auto;
+      margin-top: 15px;
+      scroll-behavior: smooth;
+    }
+    .field-card {
+      background: #1a1a2e;
+      border: 1px solid #333;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      transition: all 0.2s;
+      animation: slideIn 0.3s ease-out;
+    }
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .field-card:hover {
+      border-color: #4fc3f7;
+    }
+    .field-card.collapsed .field-body {
+      display: none;
+    }
+    .field-card.collapsed .collapse-icon {
+      transform: rotate(-90deg);
+    }
+    .field-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 15px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .field-header:hover {
+      background: rgba(79, 195, 247, 0.05);
+    }
+    .field-header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .collapse-icon {
+      color: #666;
+      transition: transform 0.2s;
+      font-size: 12px;
+    }
+    .field-name {
+      font-weight: 600;
+      color: #81d4fa;
+      font-family: monospace;
+      font-size: 14px;
+    }
+    .field-type {
+      font-size: 11px;
+      background: #333;
+      padding: 3px 8px;
+      border-radius: 4px;
+      color: #aaa;
+    }
+    .field-type.type-string { background: #2e7d32; color: #fff; }
+    .field-type.type-number { background: #1565c0; color: #fff; }
+    .field-type.type-boolean { background: #6a1b9a; color: #fff; }
+    .field-type.type-array { background: #e65100; color: #fff; }
+    .field-type.type-object { background: #00838f; color: #fff; }
+    .field-badges {
+      display: flex;
+      gap: 5px;
+      margin-left: 10px;
+    }
+    .field-badge {
+      font-size: 10px;
+      background: rgba(79, 195, 247, 0.2);
+      color: #4fc3f7;
+      padding: 2px 6px;
+      border-radius: 3px;
+    }
+    .field-body {
+      padding: 0 15px 15px;
+    }
+    .field-options {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 10px;
+    }
+    .option-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      padding: 6px 8px;
+      border-radius: 4px;
+      transition: background 0.2s;
+      min-width: 0;
+    }
+    .option-item:hover {
+      background: rgba(255,255,255,0.05);
+    }
+    .option-item input[type="checkbox"] {
+      accent-color: #4fc3f7;
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .option-item label {
+      cursor: pointer;
+      flex: 1;
+      white-space: nowrap;
+    }
+    .option-item input[type="text"],
+    .option-item input[type="number"],
+    .option-item select {
+      background: #0f0f23;
+      border: 1px solid #333;
+      border-radius: 4px;
+      color: #eee;
+      padding: 6px 8px;
+      font-size: 12px;
+      min-width: 70px;
+      flex: 1;
+      transition: border-color 0.2s;
+    }
+    .option-item input:focus,
+    .option-item select:focus {
+      outline: none;
+      border-color: #4fc3f7;
+    }
+    .option-item select {
+      min-width: 100px;
+    }
+    .option-item > label:first-child {
+      flex: 0 0 auto;
+      white-space: nowrap;
+      color: #888;
+      font-size: 12px;
+    }
+    .option-group {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid #333;
+    }
+    .option-group .field-options {
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+    .option-group-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      margin-bottom: 10px;
+    }
+    .option-group-title {
+      font-size: 11px;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .option-group-toggle {
+      font-size: 10px;
+      color: #4fc3f7;
+    }
+    .nested-indicator {
+      color: #f9a825;
+      font-size: 11px;
+      margin-left: 10px;
+    }
+    .output-panel {
+      position: relative;
+    }
+    .output-panel textarea {
+      height: 400px;
+    }
+    .output-actions {
+      position: absolute;
+      top: 55px;
+      right: 30px;
+      display: flex;
+      gap: 8px;
+    }
+    .copy-btn, .download-btn {
+      background: #333;
+      border: none;
+      color: #eee;
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .copy-btn:hover, .download-btn:hover {
+      background: #4fc3f7;
+      color: #1a1a2e;
+    }
+    .copy-btn.copied {
+      background: #4caf50;
+      color: white;
+    }
+    .global-options {
+      background: #1a1a2e;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 15px;
+    }
+    .global-options h3 {
+      font-size: 13px;
+      color: #888;
+      margin-bottom: 10px;
+    }
+    .global-options .field-options {
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    }
+    .error-msg {
+      background: linear-gradient(135deg, #ff5252, #f44336);
+      color: white;
+      padding: 12px 15px;
+      border-radius: 6px;
+      margin-top: 10px;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      animation: shake 0.4s ease-out;
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+    .success-msg {
+      background: linear-gradient(135deg, #4caf50, #43a047);
+      color: white;
+      padding: 12px 15px;
+      border-radius: 6px;
+      margin-top: 10px;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .empty-state {
+      text-align: center;
+      padding: 50px 20px;
+      color: #666;
+    }
+    .empty-state-icon {
+      font-size: 48px;
+      margin-bottom: 15px;
+      opacity: 0.5;
+    }
+    .empty-state p {
+      margin-bottom: 8px;
+    }
+    .empty-state small {
+      color: #555;
+    }
+    .indent {
+      margin-left: 20px;
+      border-left: 2px solid #4fc3f7;
+      padding-left: 15px;
+    }
+    .field-count {
+      background: #4fc3f7;
+      color: #1a1a2e;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-weight: 600;
+    }
+    .search-box {
+      margin-top: 15px;
+      position: relative;
+    }
+    .search-box input {
+      width: 100%;
+      background: #0f0f23;
+      border: 1px solid #333;
+      border-radius: 6px;
+      color: #eee;
+      padding: 10px 15px 10px 35px;
+      font-size: 13px;
+    }
+    .search-box input:focus {
+      outline: none;
+      border-color: #4fc3f7;
+    }
+    .search-box::before {
+      content: '🔍';
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 12px;
+    }
+    .tooltip {
+      position: relative;
+    }
+    .tooltip::after {
+      content: attr(data-tip);
+      position: absolute;
+      bottom: calc(100% + 5px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: #222;
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s, transform 0.2s;
+      z-index: 100;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      border: 1px solid #444;
+      max-width: 250px;
+      white-space: normal;
+      text-align: center;
+      transform: translateX(-50%) translateY(5px);
+    }
+    .tooltip::before {
+      content: '';
+      position: absolute;
+      bottom: calc(100% + 1px);
+      left: 50%;
+      transform: translateX(-50%);
+      border: 6px solid transparent;
+      border-top-color: #444;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+      z-index: 101;
+    }
+    .tooltip:hover::after {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+    .tooltip:hover::before {
+      opacity: 1;
+    }
+    .live-preview-badge {
+      background: #4caf50;
+      color: white;
+      font-size: 10px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      margin-left: auto;
+    }
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #333;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      z-index: 1000;
+      animation: toastIn 0.3s ease-out;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    .toast.success { background: #4caf50; }
+    .toast.error { background: #f44336; }
+    @keyframes toastIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .quick-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+    .quick-action {
+      background: rgba(79, 195, 247, 0.1);
+      border: 1px solid rgba(79, 195, 247, 0.3);
+      color: #4fc3f7;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .quick-action:hover {
+      background: rgba(79, 195, 247, 0.2);
+      border-color: #4fc3f7;
+    }
+    .keyboard-hint {
+      color: #555;
+      font-size: 11px;
+      margin-top: 5px;
+    }
+    .keyboard-hint kbd {
+      background: #333;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: monospace;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🛠️ expressjs-field-validator Config Builder</h1>
+    <p class="subtitle">Paste your JSON body and configure validation rules for each field</p>
+    
+    <div class="panels">
+      <div class="panel">
+        <h2>📥 Input JSON <span id="fieldCount" class="field-count" style="display:none">0 fields</span></h2>
+        <div class="json-input-wrapper" id="dropZone">
+          <textarea id="jsonInput" placeholder='{
+  "name": "John Doe",
+  "email": "john@example.com",
+  "age": 25,
+  "isActive": true,
+  "tags": ["developer", "designer"],
+  "address": {
+    "city": "NYC",
+    "zip": "10001"
+  }
+}'></textarea>
+          <div class="drag-overlay">📄 Drop JSON file here</div>
+        </div>
+        <div class="btn-group">
+          <button class="btn tooltip" onclick="parseJson()" data-tip="⌘+Enter">Parse JSON</button>
+          <button class="btn btn-secondary" onclick="loadSample()">Load Sample</button>
+          <button class="btn btn-secondary" onclick="clearAll()">Clear</button>
+        </div>
+        <p class="keyboard-hint">Press <kbd>⌘</kbd>+<kbd>Enter</kbd> to parse • Drag & drop JSON files supported</p>
+        <div id="parseError"></div>
+        
+        <div class="quick-actions" id="quickActions" style="display:none">
+          <button class="quick-action" onclick="markAllRequired()">✓ All Required</button>
+          <button class="quick-action" onclick="clearAllRequired()">✕ Clear Required</button>
+          <button class="quick-action" onclick="expandAll()">⬇ Expand All</button>
+          <button class="quick-action" onclick="collapseAll()">⬆ Collapse All</button>
+          <button class="quick-action" onclick="autoDetectTypes()">🔍 Auto-detect Types</button>
+        </div>
+        
+        <div class="search-box" id="searchBox" style="display:none">
+          <input type="text" id="fieldSearch" placeholder="Search fields..." oninput="filterFields(this.value)">
+        </div>
+        
+        <div id="fieldsContainer" class="fields-container">
+          <div class="empty-state">
+            <div class="empty-state-icon">📋</div>
+            <p>Paste JSON and click "Parse JSON" to get started</p>
+            <small>Or drag and drop a JSON file</small>
+          </div>
+        </div>
+      </div>
+      
+      <div class="panel output-panel">
+        <h2>📤 Generated Configuration <span class="live-preview-badge">Live Preview</span></h2>
+        
+        <div class="global-options">
+          <h3>Middleware Options</h3>
+          <div class="field-options">
+            <div class="option-item">
+              <select id="validationType" onchange="generateConfig()">
+                <option value="validateBody">validateBody()</option>
+                <option value="validateQuery">validateQuery()</option>
+                <option value="validateParam">validateParam()</option>
+                <option value="validateHeader">validateHeader()</option>
+              </select>
+            </div>
+            <div class="option-item tooltip" data-tip="On validation failure, reject the request and return error response (stops middleware chain)">
+              <input type="checkbox" id="globalReject" checked onchange="handleRejectChange(); generateConfig()">
+              <label for="globalReject">isToBeRejected()</label>
+            </div>
+            <div class="option-item tooltip" data-tip="On validation failure, forward errors via req.locals and continue to next middleware">
+              <input type="checkbox" id="globalForward" onchange="handleForwardChange(); generateConfig()">
+              <label for="globalForward">isToBeForwarded()</label>
+            </div>
+            <div class="option-item tooltip" data-tip="Apply removeIfEmpty to all fields - removes empty values ([], {}, null, '')">
+              <input type="checkbox" id="globalRemoveIfEmpty" onchange="generateConfig()">
+              <label for="globalRemoveIfEmpty">removeIfEmpty()</label>
+            </div>
+            <div class="option-item tooltip" data-tip="Remove undeclared keys from request - only keep fields defined in params">
+              <input type="checkbox" id="globalCleanUp" onchange="generateConfig()">
+              <label for="globalCleanUp">cleanUp()</label>
+            </div>
+            <div class="option-item tooltip" data-tip="Enable debug mode - error messages include more details about the validation failure">
+              <input type="checkbox" id="globalDebug" onchange="generateConfig()">
+              <label for="globalDebug">debug(true)</label>
+            </div>
+            <div class="option-item tooltip" data-tip="HTTP status code to return on validation error (default: 422)">
+              <label>Error Code:</label>
+              <input type="number" id="errorCode" placeholder="422" value="" oninput="generateConfig()">
+            </div>
+          </div>
+        </div>
+        
+        <div class="output-actions">
+          <button class="copy-btn" onclick="copyOutput()">📋 Copy</button>
+          <button class="download-btn" onclick="downloadConfig()">⬇ Download</button>
+        </div>
+        <textarea id="output" readonly placeholder="Generated configuration will appear here..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let parsedFields = [];
+    let searchTerm = '';
+
+    // Drag and drop support
+    const dropZone = document.getElementById('dropZone');
+    
+    dropZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropZone.classList.add('drag-over');
+    });
+    
+    dropZone.addEventListener('dragleave', () => {
+      dropZone.classList.remove('drag-over');
+    });
+    
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.classList.remove('drag-over');
+      
+      const file = e.dataTransfer.files[0];
+      if (file && file.type === 'application/json') {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          document.getElementById('jsonInput').value = event.target.result;
+          parseJson();
+          showToast('JSON file loaded!', 'success');
+        };
+        reader.readAsText(file);
+      } else {
+        showToast('Please drop a valid JSON file', 'error');
+      }
+    });
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+        e.preventDefault();
+        parseJson();
+      }
+    });
+
+    function showToast(message, type = '') {
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    }
+
+    function handleRejectChange() {
+      if (document.getElementById('globalReject').checked) {
+        document.getElementById('globalForward').checked = false;
+      }
+    }
+    
+    function handleForwardChange() {
+      if (document.getElementById('globalForward').checked) {
+        document.getElementById('globalReject').checked = false;
+      }
+    }
+
+    function loadSample() {
+      document.getElementById('jsonInput').value = JSON.stringify({
+        "name": "John Doe",
+        "email": "john@example.com",
+        "age": 25,
+        "isActive": true,
+        "birthDate": "1998-05-15",
+        "tags": ["developer", "designer"],
+        "address": {
+          "city": "NYC",
+          "zip": "10001"
+        },
+        "orders": [
+          { "id": 1, "amount": 99.99 }
+        ]
+      }, null, 2);
+      parseJson();
+      showToast('Sample JSON loaded!', 'success');
+    }
+
+    function clearAll() {
+      document.getElementById('jsonInput').value = '';
+      document.getElementById('output').value = '';
+      document.getElementById('fieldsContainer').innerHTML = `
+        <div class="empty-state">
+          <div class="empty-state-icon">📋</div>
+          <p>Paste JSON and click "Parse JSON" to get started</p>
+          <small>Or drag and drop a JSON file</small>
+        </div>
+      `;
+      document.getElementById('parseError').innerHTML = '';
+      document.getElementById('fieldCount').style.display = 'none';
+      document.getElementById('quickActions').style.display = 'none';
+      document.getElementById('searchBox').style.display = 'none';
+      parsedFields = [];
+    }
+
+    function getFieldType(value) {
+      if (value === null) return 'null';
+      if (Array.isArray(value)) return 'array';
+      return typeof value;
+    }
+
+    function countFields(fields) {
+      let count = fields.length;
+      fields.forEach(f => {
+        if (f.children) count += countFields(f.children);
+      });
+      return count;
+    }
+
+    function parseJson() {
+      const input = document.getElementById('jsonInput').value.trim();
+      const errorDiv = document.getElementById('parseError');
+      
+      if (!input) {
+        errorDiv.innerHTML = '<div class="error-msg">⚠️ Please enter JSON</div>';
+        return;
+      }
+      
+      try {
+        const json = JSON.parse(input);
+        errorDiv.innerHTML = '<div class="success-msg">✓ JSON parsed successfully!</div>';
+        setTimeout(() => errorDiv.innerHTML = '', 2000);
+        
+        parsedFields = extractFields(json, '');
+        renderFields();
+        
+        const totalFields = countFields(parsedFields);
+        document.getElementById('fieldCount').textContent = `${totalFields} field${totalFields !== 1 ? 's' : ''}`;
+        document.getElementById('fieldCount').style.display = 'inline';
+        document.getElementById('quickActions').style.display = 'flex';
+        document.getElementById('searchBox').style.display = 'block';
+        
+        generateConfig();
+      } catch (e) {
+        errorDiv.innerHTML = `<div class="error-msg">⚠️ Invalid JSON: ${e.message}</div>`;
+      }
+    }
+
+    function filterFields(term) {
+      searchTerm = term.toLowerCase();
+      renderFields();
+    }
+
+    function markAllRequired() {
+      document.querySelectorAll('[id$="_required"]').forEach(el => el.checked = true);
+      generateConfig();
+      showToast('All fields marked as required', 'success');
+    }
+
+    function clearAllRequired() {
+      document.querySelectorAll('[id$="_required"]').forEach(el => el.checked = false);
+      generateConfig();
+      showToast('Cleared all required flags', 'success');
+    }
+
+    function expandAll() {
+      document.querySelectorAll('.field-card').forEach(el => el.classList.remove('collapsed'));
+    }
+
+    function collapseAll() {
+      document.querySelectorAll('.field-card').forEach(el => el.classList.add('collapsed'));
+    }
+
+    function autoDetectTypes() {
+      parsedFields.forEach(function detectField(field) {
+        const el = (suffix) => document.getElementById(`${field.path}_${suffix}`);
+        
+        if (field.type === 'number' && el('number')) el('number').checked = true;
+        if (field.type === 'boolean' && el('boolean')) el('boolean').checked = true;
+        if (field.key.toLowerCase().includes('email') && el('email')) el('email').checked = true;
+        if (field.key.toLowerCase().includes('date') && el('date')) el('date').checked = true;
+        
+        if (field.children) field.children.forEach(detectField);
+      });
+      generateConfig();
+      showToast('Types auto-detected!', 'success');
+    }
+
+    function downloadConfig() {
+      const output = document.getElementById('output').value;
+      if (!output) {
+        showToast('Generate config first!', 'error');
+        return;
+      }
+      
+      const blob = new Blob([output], { type: 'text/javascript' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'validation-config.js';
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('Config downloaded!', 'success');
+    }
+
+    function extractFields(obj, parentPath, depth = 0) {
+      const fields = [];
+      
+      for (const [key, value] of Object.entries(obj)) {
+        const path = parentPath ? `${parentPath}.${key}` : key;
+        const type = getFieldType(value);
+        
+        const field = {
+          key,
+          path,
+          type,
+          depth,
+          value,
+          options: {
+            isRequired: false,
+            isNumber: type === 'number',
+            isEmail: key.toLowerCase().includes('email'),
+            isBoolean: type === 'boolean',
+            isDate: key.toLowerCase().includes('date'),
+            isArray: type === 'array',
+            isObject: type === 'object',
+            dateFormat: '',
+            convertToFormat: '',
+            minimumNumber: '',
+            maximumNumber: '',
+            minimumLength: '',
+            maximumLength: '',
+            shouldInclude: '',
+            shouldExclude: '',
+            defaultValue: '',
+            removeIfEmpty: false,
+            errorMessage: ''
+          },
+          children: []
+        };
+        
+        if (type === 'object' && value !== null) {
+          field.children = extractFields(value, path, depth + 1);
+        } else if (type === 'array' && value.length > 0) {
+          const firstItem = value[0];
+          if (typeof firstItem === 'object' && firstItem !== null) {
+            field.children = extractFields(firstItem, `${path}[]`, depth + 1);
+            field.childType = 'object';
+          } else {
+            field.childType = getFieldType(firstItem);
+          }
+        }
+        
+        fields.push(field);
+      }
+      
+      return fields;
+    }
+
+    function renderFields() {
+      const container = document.getElementById('fieldsContainer');
+      
+      if (parsedFields.length === 0) {
+        container.innerHTML = '<div class="empty-state"><p>No fields found</p></div>';
+        return;
+      }
+      
+      container.innerHTML = renderFieldList(parsedFields);
+    }
+
+    function renderFieldList(fields, indent = false) {
+      const filteredFields = searchTerm 
+        ? fields.filter(f => f.key.toLowerCase().includes(searchTerm) || f.path.toLowerCase().includes(searchTerm))
+        : fields;
+      
+      if (filteredFields.length === 0 && searchTerm) {
+        return '<div class="empty-state" style="padding: 20px;"><p>No fields match your search</p></div>';
+      }
+      
+      return `<div class="${indent ? 'indent' : ''}">
+        ${filteredFields.map(field => renderFieldCard(field)).join('')}
+      </div>`;
+    }
+
+    function toggleFieldCard(path) {
+      const card = document.querySelector(`[data-path="${path}"]`);
+      if (card) card.classList.toggle('collapsed');
+    }
+
+    function renderFieldCard(field) {
+      const typeLabel = field.type === 'array' 
+        ? `array[${field.childType || 'mixed'}]` 
+        : field.type;
+      
+      const typeClass = `type-${field.type}`;
+      const badges = [];
+      if (field.options.isEmail) badges.push('email');
+      if (field.options.isDate) badges.push('date');
+      
+      return `
+        <div class="field-card" data-path="${field.path}">
+          <div class="field-header" onclick="toggleFieldCard('${field.path}')">
+            <div class="field-header-left">
+              <span class="collapse-icon">▼</span>
+              <span class="field-name">${field.key}</span>
+              <span class="field-type ${typeClass}">${typeLabel}</span>
+              <div class="field-badges">
+                ${badges.map(b => `<span class="field-badge">${b}</span>`).join('')}
+              </div>
+            </div>
+          </div>
+          <div class="field-body">
+            <div class="field-options">
+              <div class="option-item tooltip" data-tip="Field is mandatory">
+                <input type="checkbox" id="${field.path}_required" ${field.options.isRequired ? 'checked' : ''} onchange="generateConfig()">
+                <label for="${field.path}_required">isRequired</label>
+              </div>
+              ${field.type !== 'array' && field.type !== 'object' ? `
+                <div class="option-item tooltip" data-tip="Expects a numeric value">
+                  <input type="checkbox" id="${field.path}_number" ${field.options.isNumber ? 'checked' : ''} onchange="generateConfig()">
+                  <label for="${field.path}_number">isNumber</label>
+                </div>
+                <div class="option-item tooltip" data-tip="Expects a valid email address">
+                  <input type="checkbox" id="${field.path}_email" ${field.options.isEmail ? 'checked' : ''} onchange="generateConfig()">
+                  <label for="${field.path}_email">isEmail</label>
+                </div>
+                <div class="option-item tooltip" data-tip="Expects true/false or 'true'/'false'">
+                  <input type="checkbox" id="${field.path}_boolean" ${field.options.isBoolean ? 'checked' : ''} onchange="generateConfig()">
+                  <label for="${field.path}_boolean">isBoolean</label>
+                </div>
+                <div class="option-item tooltip" data-tip="Expects a date (default: YYYY-MM-DD)">
+                  <input type="checkbox" id="${field.path}_date" ${field.options.isDate ? 'checked' : ''} onchange="generateConfig()">
+                  <label for="${field.path}_date">isDate</label>
+                </div>
+              ` : ''}
+              <div class="option-item tooltip" data-tip="Remove field if value is empty ([], {}, null, '')">
+                <input type="checkbox" id="${field.path}_removeIfEmpty" ${field.options.removeIfEmpty ? 'checked' : ''} onchange="generateConfig()">
+                <label for="${field.path}_removeIfEmpty">removeIfEmpty</label>
+              </div>
+            </div>
+            
+            <div class="option-group">
+              <div class="option-group-title">Additional Options</div>
+              <div class="field-options">
+                ${field.options.isDate || field.type !== 'array' && field.type !== 'object' ? `
+                  <div class="option-item tooltip" data-tip="Expected input date format">
+                    <label>dateFormat:</label>
+                    <select id="${field.path}_dateFormat" onchange="generateConfig()">
+                      <option value="">None</option>
+                      <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+                      <option value="DD-MM-YYYY">DD-MM-YYYY</option>
+                      <option value="MM-DD-YYYY">MM-DD-YYYY</option>
+                      <option value="YYYY/MM/DD">YYYY/MM/DD</option>
+                      <option value="DD/MM/YYYY">DD/MM/YYYY</option>
+                      <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+                    </select>
+                  </div>
+                  <div class="option-item tooltip" data-tip="Convert date to this format after validation">
+                    <label>convertTo:</label>
+                    <select id="${field.path}_convertToFormat" onchange="generateConfig()">
+                      <option value="">None</option>
+                      <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+                      <option value="DD-MM-YYYY">DD-MM-YYYY</option>
+                      <option value="MM-DD-YYYY">MM-DD-YYYY</option>
+                      <option value="YYYY/MM/DD">YYYY/MM/DD</option>
+                      <option value="DD/MM/YYYY">DD/MM/YYYY</option>
+                      <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+                    </select>
+                  </div>
+                ` : ''}
+                <div class="option-item tooltip" data-tip="Minimum allowed numeric value">
+                  <label>minNum:</label>
+                  <input type="number" id="${field.path}_minNumber" placeholder="min" oninput="generateConfig()">
+                </div>
+                <div class="option-item tooltip" data-tip="Maximum allowed numeric value">
+                  <label>maxNum:</label>
+                  <input type="number" id="${field.path}_maxNumber" placeholder="max" oninput="generateConfig()">
+                </div>
+                <div class="option-item tooltip" data-tip="Minimum string/number length">
+                  <label>minLen:</label>
+                  <input type="number" id="${field.path}_minLength" placeholder="min" oninput="generateConfig()">
+                </div>
+                <div class="option-item tooltip" data-tip="Maximum string/number length">
+                  <label>maxLen:</label>
+                  <input type="number" id="${field.path}_maxLength" placeholder="max" oninput="generateConfig()">
+                </div>
+                <div class="option-item tooltip" data-tip="Value must be one of these (comma-separated)">
+                  <label>include:</label>
+                  <input type="text" id="${field.path}_include" placeholder="a,b,c" oninput="generateConfig()">
+                </div>
+                <div class="option-item tooltip" data-tip="Value must NOT be one of these (comma-separated)">
+                  <label>exclude:</label>
+                  <input type="text" id="${field.path}_exclude" placeholder="x,y,z" oninput="generateConfig()">
+                </div>
+                <div class="option-item tooltip" data-tip="Default value when field is empty">
+                  <label>default:</label>
+                  <input type="text" id="${field.path}_default" placeholder="value" oninput="generateConfig()">
+                </div>
+                <div class="option-item tooltip" data-tip="Custom error message on validation failure">
+                  <label>error:</label>
+                  <input type="text" id="${field.path}_errorMsg" placeholder="Custom error" oninput="generateConfig()">
+                </div>
+              </div>
+            </div>
+            
+            ${field.children.length > 0 ? `
+              <div class="option-group">
+                <div class="option-group-title">Nested Fields (${field.children.length})</div>
+                ${renderFieldList(field.children, true)}
+              </div>
+            ` : ''}
+          </div>
+        </div>
+      `;
+    }
+
+    function getFieldOptions(field) {
+      const getVal = (suffix) => {
+        const el = document.getElementById(`${field.path}_${suffix}`);
+        return el ? (el.type === 'checkbox' ? el.checked : el.value) : '';
+      };
+      
+      return {
+        isRequired: getVal('required'),
+        isNumber: getVal('number'),
+        isEmail: getVal('email'),
+        isBoolean: getVal('boolean'),
+        isDate: getVal('date'),
+        isArray: field.type === 'array',
+        isObject: field.type === 'object',
+        dateFormat: getVal('dateFormat'),
+        convertToFormat: getVal('convertToFormat'),
+        minimumNumber: getVal('minNumber'),
+        maximumNumber: getVal('maxNumber'),
+        minimumLength: getVal('minLength'),
+        maximumLength: getVal('maxLength'),
+        shouldInclude: getVal('include'),
+        shouldExclude: getVal('exclude'),
+        defaultValue: getVal('default'),
+        removeIfEmpty: getVal('removeIfEmpty'),
+        errorMessage: getVal('errorMsg')
+      };
+    }
+
+    function generateParamCode(field, indent = '  ') {
+      const opts = getFieldOptions(field);
+      let code = `${indent}param('${field.key}')`;
+      
+      if (opts.isRequired) code += '.isRequired()';
+      if (opts.isArray) code += '.isArray()';
+      if (opts.isObject) code += '.isObject()';
+      if (opts.isNumber) code += '.isNumber()';
+      if (opts.isEmail) code += '.isEmail()';
+      if (opts.isBoolean) code += '.isBoolean()';
+      if (opts.isDate) code += '.isDate()';
+      if (opts.dateFormat) code += `.dateFormat('${opts.dateFormat}')`;
+      if (opts.convertToFormat) code += `.convertToFormat('${opts.convertToFormat}')`;
+      if (opts.minimumNumber) code += `.minimumNumber(${opts.minimumNumber})`;
+      if (opts.maximumNumber) code += `.maximumNumber(${opts.maximumNumber})`;
+      if (opts.minimumLength) code += `.minimumLength(${opts.minimumLength})`;
+      if (opts.maximumLength) code += `.maximumLength(${opts.maximumLength})`;
+      if (opts.shouldInclude) {
+        const items = opts.shouldInclude.split(',').map(s => `'${s.trim()}'`).join(', ');
+        code += `.shouldInclude([${items}])`;
+      }
+      if (opts.shouldExclude) {
+        const items = opts.shouldExclude.split(',').map(s => `'${s.trim()}'`).join(', ');
+        code += `.shouldExclude([${items}])`;
+      }
+      if (opts.defaultValue) {
+        const val = isNaN(opts.defaultValue) ? `'${opts.defaultValue}'` : opts.defaultValue;
+        code += `.defaultValue(${val})`;
+      }
+      if (opts.removeIfEmpty) code += '.removeIfEmpty()';
+      if (opts.errorMessage) code += `.sendErrorMessage('${opts.errorMessage}')`;
+      
+      // Handle children
+      if (field.children.length > 0) {
+        if (field.children.length === 1 || field.type === 'array') {
+          const childCode = generateParamCode(field.children[0], indent + '    ');
+          code += `.addChild(\n${childCode}\n${indent}  )`;
+        } else {
+          const childrenCode = field.children
+            .map(child => generateParamCode(child, indent + '    '))
+            .join(',\n');
+          code += `.addChildren([\n${childrenCode}\n${indent}  ])`;
+        }
+      }
+      
+      return code;
+    }
+
+    function generateConfig() {
+      if (parsedFields.length === 0) {
+        document.getElementById('output').value = '// No fields parsed. Please parse JSON first.';
+        return;
+      }
+      
+      const validationType = document.getElementById('validationType').value;
+      const isRejected = document.getElementById('globalReject').checked;
+      const isForwarded = document.getElementById('globalForward').checked;
+      const globalRemoveIfEmpty = document.getElementById('globalRemoveIfEmpty').checked;
+      const globalCleanUp = document.getElementById('globalCleanUp').checked;
+      const globalDebug = document.getElementById('globalDebug').checked;
+      const errorCode = document.getElementById('errorCode').value;
+      
+      let code = `const { \n  ${validationType},\n  param,\n} = require('expressjs-field-validator');\n\n`;
+      code += `${validationType}()`;
+      
+      if (isRejected) code += '\n  .isToBeRejected()';
+      if (isForwarded) code += '\n  .isToBeForwarded()';
+      if (globalRemoveIfEmpty) code += '\n  .removeIfEmpty()';
+      if (globalCleanUp) code += '\n  .cleanUp()';
+      if (globalDebug) code += '\n  .debug(true)';
+      if (errorCode) code += `\n  .sendErrorCode(${errorCode})`;
+      
+      code += '\n  .addParams([\n';
+      
+      const paramsCode = parsedFields
+        .map(field => generateParamCode(field, '    '))
+        .join(',\n');
+      
+      code += paramsCode;
+      code += '\n  ])';
+      
+      document.getElementById('output').value = code;
+    }
+
+    function copyOutput() {
+      const output = document.getElementById('output');
+      
+      if (!output.value || output.value.includes('// No fields')) {
+        showToast('Generate config first!', 'error');
+        return;
+      }
+      
+      navigator.clipboard.writeText(output.value).then(() => {
+        const btn = document.querySelector('.copy-btn');
+        btn.classList.add('copied');
+        btn.textContent = '✓ Copied!';
+        showToast('Configuration copied to clipboard!', 'success');
+        setTimeout(() => {
+          btn.classList.remove('copied');
+          btn.textContent = '📋 Copy';
+        }, 2000);
+      }).catch(() => {
+        // Fallback for older browsers
+        output.select();
+        document.execCommand('copy');
+        showToast('Configuration copied!', 'success');
+      });
+    }
+  </script>
+</body>
+</html>
