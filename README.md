@@ -54,6 +54,7 @@ Request field validator for expressjs
         - [skipService](#skipservice)
       - [sendErrorCode(errorCode)](#senderrorcodeerrorcode)
       - [debug(isDebugEnabled)](#debugisdebugenabled)
+      - [removeIfEmpty()](#removeifempty-1)
       - [addParams(paramList)](#addparamsparamlist)
 - [Dealing with nested objects](#dealing-with-nested-objects)
   - [Request body](#request-body)
@@ -351,6 +352,29 @@ Error object
     ]
 }
 ```
+##### removeIfEmpty()
+Applies `removeIfEmpty` behavior to all fields in the validation middleware. When enabled:
+* Arrays: removed if `[]`
+* Objects: removed if `{}`
+* Other fields: removed if `undefined`, `null`, or `''`
+
+This is a convenience method to avoid adding `removeIfEmpty()` to each field individually.
+```js
+// Instead of adding removeIfEmpty() to each field:
+validateBody().addParams([
+  param('name').removeIfEmpty(),
+  param('email').removeIfEmpty(),
+  param('phone').removeIfEmpty(),
+])
+
+// You can add it once at the top level:
+validateBody().removeIfEmpty().addParams([
+  param('name'),
+  param('email'),
+  param('phone'),
+])
+```
+> **Note:** Field-level `removeIfEmpty()` can still be used when you only want to remove specific fields.
 ##### addParams(paramList)
 * `paramList` *Mandatory* Array of field definition objects
 ```js
