@@ -38,6 +38,8 @@ export interface ParamBuilder {
   isNumber(): ParamBuilder;
   /** Expect the field value to be a valid email address. */
   isEmail(): ParamBuilder;
+  /** Expect the field value to be a valid UUID string. */
+  isUUID(): ParamBuilder;
   /** Expect the field value to be a boolean (`true`, `false`, `'true'`, `'false'`). */
   isBoolean(): ParamBuilder;
   /** Expect the field value to be a date (default format `YYYY-MM-DD`). */
