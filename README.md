@@ -55,6 +55,7 @@ Request field validator for expressjs
       - [sendErrorCode(errorCode)](#senderrorcodeerrorcode)
       - [debug(isDebugEnabled)](#debugisdebugenabled)
       - [removeIfEmpty()](#removeifempty-1)
+      - [cleanUp()](#cleanup)
       - [addParams(paramList)](#addparamsparamlist)
 - [Dealing with nested objects](#dealing-with-nested-objects)
   - [Request body](#request-body)
@@ -375,6 +376,23 @@ validateBody().removeIfEmpty().addParams([
 ])
 ```
 > **Note:** Field-level `removeIfEmpty()` can still be used when you only want to remove specific fields.
+##### cleanUp()
+Removes any keys from the request that are not declared in the validation params. This sanitizes the input to only include explicitly defined fields. Works recursively on nested objects and arrays.
+```js
+// Request body: { name: "John", email: "john@test.com", hackAttempt: "malicious", extra: "data" }
+validateBody().cleanUp().addParams([
+  param('name').isRequired(),
+  param('email').isEmail(),
+])
+// After validation, req.body will only contain: { name: "John", email: "john@test.com" }
+// The "hackAttempt" and "extra" keys are removed
+```
+This is useful for:
+* Security: Preventing unexpected fields from being processed
+* Data sanitization: Ensuring only declared fields reach your business logic
+* API consistency: Keeping request payloads clean
+
+> **Note:** `cleanUp()` also works recursively on nested objects and arrays defined with `addChild()` or `addChildren()`.
 ##### addParams(paramList)
 * `paramList` *Mandatory* Array of field definition objects
 ```js
