@@ -35,6 +35,7 @@ jobs:
           registry-url: https://registry.npmjs.org/
       - run: npm ci
       - run: npm run test:coverage
+      - run: ls -la coverage/          # ✅ confirm lcov.info exists before scan
       - name: SonarCloud Scan
         uses: sonarsource/sonarqube-scan-action@v2  # ✅ pinned to a stable release
         env:
