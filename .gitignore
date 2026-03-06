@@ -3,3 +3,4 @@
 example/node_modules
 /coverage
 _config.yml
+/example/docs

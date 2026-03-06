@@ -223,3 +223,128 @@ export function checkService(service: RequestHandler): RequestHandler;
  * @param statusCode - The status code to set on `req.locals.statusCode`.
  */
 export function skipService(req: Request, statusCode: number): void;
+
+/**
+ * Options for generating API documentation.
+ */
+export interface GenerateDocsOptions {
+  /** Output directory for the generated documentation (default: `'./docs'`). */
+  outputDir?: string;
+  /** Output filename (default: `'api-docs.html'`). */
+  filename?: string;
+  /** Documentation title (default: `'API Documentation'`). */
+  title?: string;
+  /** API version to display. */
+  version?: string;
+}
+
+/**
+ * Result from generating documentation.
+ */
+export interface GenerateDocsResult {
+  /** Array of extracted routes with validation info. */
+  routes: Array<{
+    methods: string[];
+    path: string;
+    validations: {
+      body: any;
+      query: any;
+      params: any;
+      headers: any;
+    };
+  }>;
+  /** Absolute path to the generated HTML file, or null if no routes found. */
+  outputPath: string | null;
+}
+
+/**
+ * Generate API documentation from an Express application.
+ * Extracts all routes with validation middlewares and generates an HTML documentation file.
+ * Call this after all routes have been registered.
+ * 
+ * @param app - The Express application instance.
+ * @param options - Configuration options for documentation generation.
+ * @returns Information about the generated documentation.
+ * 
+ * @example
+ * ```typescript
+ * import express from 'express';
+ * import { generateDocs, validateBody, param } from 'expressjs-field-validator';
+ * 
+ * const app = express();
+ * 
+ * app.post('/users', 
+ *   validateBody().isToBeRejected().addParams([
+ *     param('name').isRequired(),
+ *     param('email').isRequired().isEmail(),
+ *   ]),
+ *   (req, res) => res.send('Created')
+ * );
+ * 
+ * // Generate docs after all routes are registered
+ * generateDocs(app, {
+ *   title: 'My API',
+ *   description: 'API documentation',
+ *   version: '1.0.0',
+ *   outputDir: './docs'
+ * });
+ * 
+ * app.listen(3000);
+ * ```
+ */
+export function generateDocs(app: any, options?: GenerateDocsOptions): GenerateDocsResult;
+
+/**
+ * Configuration for a single response status code.
+ */
+export interface ResponseConfig {
+  /** Description of this response. */
+  description?: string;
+  /** Sample response body. */
+  body?: any;
+  /** Response headers. */
+  headers?: Record<string, string>;
+}
+
+/**
+ * Response documentation object mapping status codes to their configurations.
+ * Keys should be HTTP status codes (100-599).
+ */
+export type ResponseDocumentation = Record<number | string, ResponseConfig>;
+
+/**
+ * Create a middleware that documents API responses.
+ * This is a pass-through middleware that attaches response metadata for documentation generation.
+ * Place it after validation middleware but before your route handler.
+ * 
+ * @param responses - Object mapping status codes to response configurations.
+ * @returns Express middleware function with attached metadata.
+ * 
+ * @example
+ * ```typescript
+ * import express from 'express';
+ * import { validateBody, param, documentResponse } from 'expressjs-field-validator';
+ * 
+ * const app = express();
+ * 
+ * app.post('/users',
+ *   validateBody().isToBeRejected().addParams([
+ *     param('name').isRequired(),
+ *     param('email').isRequired().isEmail(),
+ *   ]),
+ *   documentResponse({
+ *     201: { 
+ *       description: 'User created successfully',
+ *       body: { message: 'User created', data: { id: 1, name: 'John' } },
+ *       headers: { 'X-Request-Id': 'uuid' }
+ *     },
+ *     422: { 
+ *       description: 'Validation failed',
+ *       body: { error: 'Validation failed', details: [] }
+ *     }
+ *   }),
+ *   (req, res) => res.status(201).send({ message: 'User created' })
+ * );
+ * ```
+ */
+export function documentResponse(responses: ResponseDocumentation): RequestHandler;

@@ -62,6 +62,8 @@ Request field validator for expressjs
 - [Dealing with nested objects](#dealing-with-nested-objects)
   - [Request body](#request-body)
   - [Validation](#validation)
+- [API Documentation Generator](#api-documentation-generator)
+  - [Hosting API Documentation](#hosting-api-documentation)
 - [Migration Guide](#migration-guide)
   - [Migrating from v3.x to v4.x](#migrating-from-v3x-to-v4x)
     - [Breaking Changes](#breaking-changes)
@@ -451,6 +453,130 @@ validateParam().isToBeRejected().sendErrorCode(500).addParams([
   // Main Service Here
 
 });
+```
+
+## API Documentation Generator
+
+Automatically generate beautiful HTML documentation for your API endpoints. The generator extracts all routes with validation middlewares and creates an interactive documentation page.
+
+### Usage
+
+```js
+const express = require('express');
+const { 
+  validateBody, 
+  validateQuery, 
+  param, 
+  generateDocs 
+} = require('expressjs-field-validator');
+
+const app = express();
+
+// Define your routes with validation
+app.post('/users',
+  validateBody().isToBeRejected().addParams([
+    param('name').isRequired(),
+    param('email').isRequired().isEmail(),
+  ]),
+  (req, res) => res.status(201).send({ message: 'User created' })
+);
+
+app.get('/users/:id',
+  validateQuery().isToBeRejected().addParams([
+    param('include').shouldInclude(['profile', 'settings', 'posts']),
+  ]),
+  (req, res) => res.send({ user: {} })
+);
+
+// Generate documentation AFTER all routes are registered
+generateDocs(app, {
+  title: 'My API',
+  version: '1.0.0',
+  outputDir: './docs',
+  filename: 'api-docs.html'
+});
+
+app.listen(3000);
+```
+
+### Options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `outputDir` | `string` | `'./docs'` | Output directory for the generated HTML file |
+| `filename` | `string` | `'api-docs.html'` | Output filename |
+| `title` | `string` | `'API Documentation'` | Documentation title |
+| `version` | `string` | - | API version to display |
+
+### Features
+
+- 🎨 **Beautiful dark theme** with syntax highlighting
+- 🔍 **Search functionality** to filter endpoints
+- 📊 **Statistics** showing endpoint counts by method
+- 📋 **Detailed field information** including types, constraints, and nesting
+- 📝 **Sample request body** with copy-to-clipboard functionality
+- 🎯 **Response config display** (mode, error codes, cleanUp, etc.)
+- 📱 **Responsive design** for mobile viewing
+
+### Hosting API Documentation
+
+You can serve the generated HTML documentation using Express static middleware:
+
+```js
+const express = require('express');
+const path = require('path');
+const { generateDocs, validateBody, param } = require('expressjs-field-validator');
+
+const app = express();
+app.use(express.json());
+
+// Define your API routes
+app.post('/users',
+  validateBody().isToBeRejected().addParams([
+    param('name').isRequired(),
+    param('email').isRequired().isEmail(),
+  ]),
+  (req, res) => res.status(201).send({ message: 'User created' })
+);
+
+// Generate documentation
+generateDocs(app, {
+  title: 'My API',
+  version: '1.0.0',
+  outputDir: './docs'
+});
+
+// Serve the documentation at /api-docs
+app.use('/api-docs', express.static(path.join(__dirname, 'docs')));
+
+app.listen(3000, () => {
+  console.log('Server running on http://localhost:3000');
+  console.log('API Docs available at http://localhost:3000/api-docs/api-docs.html');
+});
+```
+
+**Alternative: Serve docs at root path**
+
+```js
+// Serve docs at /docs endpoint
+app.use('/docs', express.static(path.join(__dirname, 'docs')));
+
+// Or redirect /docs to the HTML file directly
+app.get('/docs', (req, res) => {
+  res.sendFile(path.join(__dirname, 'docs', 'api-docs.html'));
+});
+```
+
+**Production Tips:**
+- Add caching headers for better performance
+- Use environment variables to conditionally enable docs (disable in production if needed)
+- Consider adding authentication to protect internal API documentation
+
+```js
+// Only serve docs in non-production
+if (process.env.NODE_ENV !== 'production') {
+  app.use('/api-docs', express.static(path.join(__dirname, 'docs')));
+}
 ```
 
 ## Migration Guide

@@ -7,6 +7,8 @@ const {
   validateHeader,
   param,
 } = require('./lib/queryBuilder');
+const { generateDocs } = require('./lib/docGenerator');
+const { documentResponse } = require('./lib/responseDoc');
 
 module.exports = { 
   validateBody,
@@ -15,5 +17,7 @@ module.exports = {
   validateHeader,
   param,
   checkService, 
-  skipService
+  skipService,
+  generateDocs,
+  documentResponse
  };
