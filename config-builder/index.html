@@ -941,6 +941,7 @@
       const badges = [];
       if (field.options.isEmail) badges.push('email');
       if (field.options.isDate) badges.push('date');
+      if (field.options.isUUID) badges.push('uuid');
       
       return `
         <div class="field-card" data-path="${field.path}">
@@ -976,6 +977,10 @@
                 <div class="option-item tooltip" data-tip="Expects a date (default: YYYY-MM-DD)">
                   <input type="checkbox" id="${field.path}_date" ${field.options.isDate ? 'checked' : ''} onchange="generateConfig()">
                   <label for="${field.path}_date">isDate</label>
+                </div>
+                <div class="option-item tooltip" data-tip="Expects a valid UUID (v1-v5)">
+                  <input type="checkbox" id="${field.path}_uuid" ${field.options.isUUID ? 'checked' : ''} onchange="generateConfig()">
+                  <label for="${field.path}_uuid">isUUID</label>
                 </div>
               ` : ''}
               <div class="option-item tooltip" data-tip="Remove field if value is empty ([], {}, null, '')">
@@ -1071,6 +1076,7 @@
         isEmail: getVal('email'),
         isBoolean: getVal('boolean'),
         isDate: getVal('date'),
+        isUUID: getVal('uuid'),
         isArray: field.type === 'array',
         isObject: field.type === 'object',
         dateFormat: getVal('dateFormat'),
@@ -1098,6 +1104,7 @@
       if (opts.isEmail) code += '.isEmail()';
       if (opts.isBoolean) code += '.isBoolean()';
       if (opts.isDate) code += '.isDate()';
+      if (opts.isUUID) code += '.isUUID()';
       if (opts.dateFormat) code += `.dateFormat('${opts.dateFormat}')`;
       if (opts.convertToFormat) code += `.convertToFormat('${opts.convertToFormat}')`;
       if (opts.minimumNumber) code += `.minimumNumber(${opts.minimumNumber})`;
