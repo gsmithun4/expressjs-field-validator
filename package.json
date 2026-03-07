@@ -1,7 +1,7 @@
 {
   "name": "expressjs-field-validator",
   "version": "4.0.5",
-  "description": "Plugin for validating field values of json request in expressjs",
+  "description": "A powerful, lightweight Express.js middleware for validating request fields (body, query, params, headers) with a fluent, chainable API. Zero dependencies, TypeScript support, and auto API docs generation.",
   "homepage": "https://gsmithun4.github.io/expressjs-field-validator",
   "repository": {
     "type": "git",

@@ -1,5 +1,14 @@
 # expressjs-field-validator
-Request field validator for expressjs
+A powerful, lightweight Express.js middleware for validating request fields (body, query, params, headers) with a fluent, chainable API. Zero dependencies, full TypeScript support, and automatic API documentation generation.
+
+**Key Features:**
+- 🔒 **Comprehensive Validation** - Validate strings, numbers, emails, UUIDs, dates, booleans, arrays, and nested objects
+- ⛓️ **Fluent API** - Chain validation rules for readable, maintainable code
+- 📝 **Auto-generated API Docs** - Generate beautiful HTML documentation from your validation rules
+- 🧹 **Data Sanitization** - Clean up requests with `cleanUp()` and `removeIfEmpty()`
+- 🎯 **Flexible Error Handling** - Reject requests or forward errors to your handlers
+- 📦 **Zero Dependencies** - Lightweight with no external runtime dependencies
+- 💪 **TypeScript Ready** - Full type definitions included
 
 🛠️ **[Config Builder Tool](https://expressjs-field-validator-configs-builder.onrender.com)** - Generate validation configs visually!
 
