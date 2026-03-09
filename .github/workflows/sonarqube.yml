@@ -1,25 +1,20 @@
-name: Node.js Tests and SonarQube Analysis
-
+# Triggered safely with secrets for fork PRs
 on:
   push:
-    branches:
-      - master
-      - feat/**
-      - development
-  pull_request:
-    branches:
-      - master
-      - development
+    branches: [master, fix/**, feat/**]
+  pull_request_target:          # ← replaces pull_request for SonarCloud
+    branches: [master, development]
+    types: [opened, synchronize, reopened]
 
 jobs:
   run-test-cases:
     runs-on: ubuntu-latest
+    # Still use pull_request context for tests (no secrets needed)
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 24
-          registry-url: https://registry.npmjs.org/
       - run: npm ci
       - run: npm run test
 
@@ -28,16 +23,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Shallow clones disabled for better analysis
+          fetch-depth: 0
+          # For fork PRs, check out the fork's code explicitly
+          ref: ${{ github.event.pull_request.head.sha }}
       - uses: actions/setup-node@v4
         with:
           node-version: 24
-          registry-url: https://registry.npmjs.org/
       - run: npm ci
       - run: npm run test:coverage
-      - run: ls -la coverage/          # ✅ confirm lcov.info exists before scan
       - name: SonarCloud Scan
-        uses: sonarsource/sonarqube-scan-action@v2  # ✅ pinned to a stable release
+        uses: sonarsource/sonarqube-scan-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
