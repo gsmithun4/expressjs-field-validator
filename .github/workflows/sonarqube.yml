@@ -1,7 +1,7 @@
 # Triggered safely with secrets for fork PRs
 on:
   push:
-    branches: [master, development, feat/**]
+    branches: [master, fix/**, feat/**]
   pull_request_target:          # ← replaces pull_request for SonarCloud
     branches: [master, development]
     types: [opened, synchronize, reopened]
