@@ -54,6 +54,24 @@
       align-items: center;
       gap: 10px;
     }
+    .panel h3 {
+      color: #81d4fa;
+      margin-bottom: 10px;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .input-section {
+      margin-bottom: 20px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #333;
+    }
+    .input-section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
     .json-input-wrapper {
       position: relative;
     }
@@ -93,6 +111,84 @@
     textarea:focus {
       outline: none;
       border-color: #4fc3f7;
+    }
+    input[type="text"], input[type="number"] {
+      background: #0f0f23;
+      border: 1px solid #333;
+      border-radius: 6px;
+      color: #eee;
+      padding: 10px 12px;
+      font-size: 13px;
+      transition: border-color 0.2s;
+    }
+    input[type="text"]:focus, input[type="number"]:focus {
+      outline: none;
+      border-color: #4fc3f7;
+    }
+    .url-input {
+      width: 100%;
+      font-family: 'Fira Code', 'Monaco', monospace;
+    }
+    .url-input::placeholder {
+      color: #666;
+    }
+    .extracted-params {
+      margin-top: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .extracted-param {
+      background: rgba(79, 195, 247, 0.15);
+      border: 1px solid rgba(79, 195, 247, 0.4);
+      color: #4fc3f7;
+      padding: 4px 10px;
+      border-radius: 15px;
+      font-size: 12px;
+      font-family: monospace;
+    }
+    .kv-container {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .kv-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .kv-row input {
+      flex: 1;
+    }
+    .kv-row input:first-child {
+      max-width: 40%;
+    }
+    .btn-icon {
+      background: #4fc3f7;
+      color: #1a1a2e;
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+    .btn-icon:hover {
+      background: #81d4fa;
+      transform: scale(1.05);
+    }
+    .btn-icon.btn-remove {
+      background: #f44336;
+      color: white;
+      font-size: 14px;
+    }
+    .btn-icon.btn-remove:hover {
+      background: #e53935;
     }
     .btn {
       background: #4fc3f7;
@@ -137,7 +233,7 @@
       flex-wrap: wrap;
     }
     .fields-container {
-      max-height: 500px;
+      max-height: 400px;
       overflow-y: auto;
       margin-top: 15px;
       scroll-behavior: smooth;
@@ -208,6 +304,9 @@
     .field-type.type-boolean { background: #6a1b9a; color: #fff; }
     .field-type.type-array { background: #e65100; color: #fff; }
     .field-type.type-object { background: #00838f; color: #fff; }
+    .field-type.type-param { background: #7b1fa2; color: #fff; }
+    .field-type.type-query { background: #0097a7; color: #fff; }
+    .field-type.type-header { background: #5d4037; color: #fff; }
     .field-badges {
       display: flex;
       gap: 5px;
@@ -314,7 +413,7 @@
       position: relative;
     }
     .output-panel textarea {
-      height: 400px;
+      height: 500px;
     }
     .output-actions {
       position: absolute;
@@ -546,18 +645,76 @@
       border-radius: 3px;
       font-family: monospace;
     }
+    .section-tabs {
+      display: flex;
+      gap: 5px;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+    }
+    .section-tab {
+      background: #1a1a2e;
+      border: 1px solid #333;
+      color: #888;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .section-tab:hover {
+      border-color: #4fc3f7;
+      color: #4fc3f7;
+    }
+    .section-tab.active {
+      background: #4fc3f7;
+      border-color: #4fc3f7;
+      color: #1a1a2e;
+    }
+    .section-content {
+      display: none;
+    }
+    .section-content.active {
+      display: block;
+    }
+    .helper-text {
+      color: #666;
+      font-size: 11px;
+      margin-top: 5px;
+    }
+    .param-source-badge {
+      font-size: 9px;
+      padding: 2px 6px;
+      border-radius: 3px;
+      margin-left: 8px;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+    .param-source-badge.body { background: #2e7d32; color: #fff; }
+    .param-source-badge.param { background: #7b1fa2; color: #fff; }
+    .param-source-badge.query { background: #0097a7; color: #fff; }
+    .param-source-badge.header { background: #5d4037; color: #fff; }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>🛠️ expressjs-field-validator Config Builder</h1>
-    <p class="subtitle">Paste your JSON body and configure validation rules for each field</p>
+    <p class="subtitle">Build validation configurations for body, path params, query params, and headers</p>
     
     <div class="panels">
       <div class="panel">
-        <h2>📥 Input JSON <span id="fieldCount" class="field-count" style="display:none">0 fields</span></h2>
-        <div class="json-input-wrapper" id="dropZone">
-          <textarea id="jsonInput" placeholder='{
+        <div class="section-tabs">
+          <button class="section-tab active" onclick="switchSection('body')">📦 Body</button>
+          <button class="section-tab" onclick="switchSection('params')">🔗 Path Params</button>
+          <button class="section-tab" onclick="switchSection('query')">❓ Query</button>
+          <button class="section-tab" onclick="switchSection('headers')">📋 Headers</button>
+        </div>
+        
+        <!-- Body Section -->
+        <div id="section-body" class="section-content active">
+          <div class="input-section">
+            <h3>📥 Request Body JSON <span id="fieldCount" class="field-count" style="display:none">0 fields</span></h3>
+            <div class="json-input-wrapper" id="dropZone">
+              <textarea id="jsonInput" placeholder='{
   "name": "John Doe",
   "email": "john@example.com",
   "age": 25,
@@ -568,33 +725,99 @@
     "zip": "10001"
   }
 }'></textarea>
-          <div class="drag-overlay">📄 Drop JSON file here</div>
+              <div class="drag-overlay">📄 Drop JSON file here</div>
+            </div>
+            <div class="btn-group">
+              <button class="btn tooltip" onclick="parseJson()" data-tip="⌘+Enter">Parse JSON</button>
+              <button class="btn btn-secondary" onclick="loadSample()">Load Sample</button>
+              <button class="btn btn-secondary" onclick="clearBody()">Clear</button>
+            </div>
+            <p class="keyboard-hint">Press <kbd>⌘</kbd>+<kbd>Enter</kbd> to parse • Drag & drop JSON files supported</p>
+            <div id="parseError"></div>
+          </div>
+          
+          <div class="quick-actions" id="quickActions" style="display:none">
+            <button class="quick-action" onclick="markAllRequired()">✓ All Required</button>
+            <button class="quick-action" onclick="clearAllRequired()">✕ Clear Required</button>
+            <button class="quick-action" onclick="expandAll()">⬇ Expand All</button>
+            <button class="quick-action" onclick="collapseAll()">⬆ Collapse All</button>
+            <button class="quick-action" onclick="autoDetectTypes()">🔍 Auto-detect Types</button>
+          </div>
+          
+          <div class="search-box" id="searchBox" style="display:none">
+            <input type="text" id="fieldSearch" placeholder="Search fields..." oninput="filterFields(this.value)">
+          </div>
+          
+          <div id="fieldsContainer" class="fields-container">
+            <div class="empty-state">
+              <div class="empty-state-icon">📋</div>
+              <p>Paste JSON and click "Parse JSON" to get started</p>
+              <small>Or drag and drop a JSON file</small>
+            </div>
+          </div>
         </div>
-        <div class="btn-group">
-          <button class="btn tooltip" onclick="parseJson()" data-tip="⌘+Enter">Parse JSON</button>
-          <button class="btn btn-secondary" onclick="loadSample()">Load Sample</button>
-          <button class="btn btn-secondary" onclick="clearAll()">Clear</button>
-        </div>
-        <p class="keyboard-hint">Press <kbd>⌘</kbd>+<kbd>Enter</kbd> to parse • Drag & drop JSON files supported</p>
-        <div id="parseError"></div>
         
-        <div class="quick-actions" id="quickActions" style="display:none">
-          <button class="quick-action" onclick="markAllRequired()">✓ All Required</button>
-          <button class="quick-action" onclick="clearAllRequired()">✕ Clear Required</button>
-          <button class="quick-action" onclick="expandAll()">⬇ Expand All</button>
-          <button class="quick-action" onclick="collapseAll()">⬆ Collapse All</button>
-          <button class="quick-action" onclick="autoDetectTypes()">🔍 Auto-detect Types</button>
+        <!-- Path Params Section -->
+        <div id="section-params" class="section-content">
+          <div class="input-section">
+            <h3>🔗 URL Path</h3>
+            <input type="text" id="urlPathInput" class="url-input" placeholder="/api/:organization/users/:id" oninput="parseUrlParams()">
+            <p class="helper-text">Use :paramName syntax to define path parameters (e.g., /users/:id/posts/:postId)</p>
+            <div id="extractedParams" class="extracted-params"></div>
+          </div>
+          
+          <div id="pathParamsContainer" class="fields-container">
+            <div class="empty-state">
+              <div class="empty-state-icon">🔗</div>
+              <p>Enter a URL path with :params to extract parameters</p>
+              <small>Example: /api/:organization/users/:id</small>
+            </div>
+          </div>
         </div>
         
-        <div class="search-box" id="searchBox" style="display:none">
-          <input type="text" id="fieldSearch" placeholder="Search fields..." oninput="filterFields(this.value)">
+        <!-- Query Section -->
+        <div id="section-query" class="section-content">
+          <div class="input-section">
+            <h3>❓ Query Parameters</h3>
+            <div id="queryParamsContainer" class="kv-container">
+              <div class="kv-row">
+                <input type="text" placeholder="Key (e.g., page)" oninput="updateQueryParams()">
+                <input type="text" placeholder="Sample value (e.g., 1)" oninput="updateQueryParams()">
+                <button class="btn-icon" onclick="addQueryParam()">+</button>
+              </div>
+            </div>
+            <p class="helper-text">Add query parameters to validate (e.g., ?page=1&sort=name)</p>
+          </div>
+          
+          <div id="queryFieldsContainer" class="fields-container">
+            <div class="empty-state">
+              <div class="empty-state-icon">❓</div>
+              <p>Add query parameters above to configure validation</p>
+              <small>Parameters with empty keys will be ignored</small>
+            </div>
+          </div>
         </div>
         
-        <div id="fieldsContainer" class="fields-container">
-          <div class="empty-state">
-            <div class="empty-state-icon">📋</div>
-            <p>Paste JSON and click "Parse JSON" to get started</p>
-            <small>Or drag and drop a JSON file</small>
+        <!-- Headers Section -->
+        <div id="section-headers" class="section-content">
+          <div class="input-section">
+            <h3>📋 Request Headers</h3>
+            <div id="headersContainer" class="kv-container">
+              <div class="kv-row">
+                <input type="text" placeholder="Header name (e.g., Authorization)" oninput="updateHeaders()">
+                <input type="text" placeholder="Sample value (e.g., Bearer token)" oninput="updateHeaders()">
+                <button class="btn-icon" onclick="addHeader()">+</button>
+              </div>
+            </div>
+            <p class="helper-text">Add headers to validate (e.g., Authorization, X-API-Key)</p>
+          </div>
+          
+          <div id="headerFieldsContainer" class="fields-container">
+            <div class="empty-state">
+              <div class="empty-state-icon">📋</div>
+              <p>Add headers above to configure validation</p>
+              <small>Headers with empty names will be ignored</small>
+            </div>
           </div>
         </div>
       </div>
@@ -603,16 +826,8 @@
         <h2>📤 Generated Configuration <span class="live-preview-badge">Live Preview</span></h2>
         
         <div class="global-options">
-          <h3>Middleware Options</h3>
+          <h3>Middleware Options (applies to all validators)</h3>
           <div class="field-options">
-            <div class="option-item">
-              <select id="validationType" onchange="generateConfig()">
-                <option value="validateBody">validateBody()</option>
-                <option value="validateQuery">validateQuery()</option>
-                <option value="validateParam">validateParam()</option>
-                <option value="validateHeader">validateHeader()</option>
-              </select>
-            </div>
             <div class="option-item tooltip" data-tip="On validation failure, reject the request and return error response (stops middleware chain)">
               <input type="checkbox" id="globalReject" checked onchange="handleRejectChange(); generateConfig()">
               <label for="globalReject">isToBeRejected()</label>
@@ -651,7 +866,21 @@
 
   <script>
     let parsedFields = [];
+    let pathParams = [];
+    let queryParams = [];
+    let headerParams = [];
     let searchTerm = '';
+    let activeSection = 'body';
+
+    // Section switching
+    function switchSection(section) {
+      activeSection = section;
+      document.querySelectorAll('.section-tab').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.section-content').forEach(content => content.classList.remove('active'));
+      document.querySelector(`.section-tab[onclick="switchSection('${section}')"]`).classList.add('active');
+      document.getElementById(`section-${section}`).classList.add('active');
+      generateConfig();
+    }
 
     // Drag and drop support
     const dropZone = document.getElementById('dropZone');
@@ -711,6 +940,279 @@
       }
     }
 
+    // ─── URL Path Params ─────────────────────────────────────────────────────────
+    function parseUrlParams() {
+      const urlPath = document.getElementById('urlPathInput').value;
+      const paramRegex = /:([a-zA-Z_][a-zA-Z0-9_]*)/g;
+      const matches = [...urlPath.matchAll(paramRegex)];
+      
+      pathParams = matches.map(match => ({
+        key: match[1],
+        path: `param_${match[1]}`,
+        type: 'string',
+        source: 'param',
+        options: {
+          isRequired: true,
+          isNumber: false,
+          isEmail: false,
+          isBoolean: false,
+          isDate: false,
+          isUUID: false,
+          minimumLength: '',
+          maximumLength: '',
+          errorMessage: ''
+        }
+      }));
+      
+      // Show extracted params
+      const container = document.getElementById('extractedParams');
+      if (pathParams.length > 0) {
+        container.innerHTML = pathParams.map(p => 
+          `<span class="extracted-param">:${p.key}</span>`
+        ).join('');
+      } else {
+        container.innerHTML = '';
+      }
+      
+      renderPathParams();
+      generateConfig();
+    }
+
+    function renderPathParams() {
+      const container = document.getElementById('pathParamsContainer');
+      
+      if (pathParams.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">🔗</div>
+            <p>Enter a URL path with :params to extract parameters</p>
+            <small>Example: /api/:organization/users/:id</small>
+          </div>
+        `;
+        return;
+      }
+      
+      container.innerHTML = pathParams.map(field => renderSimpleFieldCard(field, 'param')).join('');
+    }
+
+    // ─── Query Params ────────────────────────────────────────────────────────────
+    function addQueryParam() {
+      const container = document.getElementById('queryParamsContainer');
+      const row = document.createElement('div');
+      row.className = 'kv-row';
+      row.innerHTML = `
+        <input type="text" placeholder="Key" oninput="updateQueryParams()">
+        <input type="text" placeholder="Sample value" oninput="updateQueryParams()">
+        <button class="btn-icon btn-remove" onclick="removeKvRow(this, 'query')">×</button>
+      `;
+      container.appendChild(row);
+    }
+
+    function updateQueryParams() {
+      const container = document.getElementById('queryParamsContainer');
+      const rows = container.querySelectorAll('.kv-row');
+      
+      queryParams = [];
+      rows.forEach(row => {
+        const inputs = row.querySelectorAll('input');
+        const key = inputs[0].value.trim();
+        const value = inputs[1].value.trim();
+        
+        if (key) {
+          queryParams.push({
+            key,
+            value,
+            path: `query_${key}`,
+            type: detectType(value),
+            source: 'query',
+            options: {
+              isRequired: false,
+              isNumber: !isNaN(value) && value !== '',
+              isEmail: key.toLowerCase().includes('email'),
+              isBoolean: value === 'true' || value === 'false',
+              isDate: false,
+              isUUID: false,
+              minimumLength: '',
+              maximumLength: '',
+              errorMessage: ''
+            }
+          });
+        }
+      });
+      
+      renderQueryParams();
+      generateConfig();
+    }
+
+    function renderQueryParams() {
+      const container = document.getElementById('queryFieldsContainer');
+      
+      if (queryParams.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">❓</div>
+            <p>Add query parameters above to configure validation</p>
+            <small>Parameters with empty keys will be ignored</small>
+          </div>
+        `;
+        return;
+      }
+      
+      container.innerHTML = queryParams.map(field => renderSimpleFieldCard(field, 'query')).join('');
+    }
+
+    // ─── Headers ─────────────────────────────────────────────────────────────────
+    function addHeader() {
+      const container = document.getElementById('headersContainer');
+      const row = document.createElement('div');
+      row.className = 'kv-row';
+      row.innerHTML = `
+        <input type="text" placeholder="Header name" oninput="updateHeaders()">
+        <input type="text" placeholder="Sample value" oninput="updateHeaders()">
+        <button class="btn-icon btn-remove" onclick="removeKvRow(this, 'header')">×</button>
+      `;
+      container.appendChild(row);
+    }
+
+    function updateHeaders() {
+      const container = document.getElementById('headersContainer');
+      const rows = container.querySelectorAll('.kv-row');
+      
+      headerParams = [];
+      rows.forEach(row => {
+        const inputs = row.querySelectorAll('input');
+        const key = inputs[0].value.trim();
+        const value = inputs[1].value.trim();
+        
+        if (key) {
+          headerParams.push({
+            key: key.toLowerCase(),
+            originalKey: key,
+            value,
+            path: `header_${key.toLowerCase()}`,
+            type: 'string',
+            source: 'header',
+            options: {
+              isRequired: key.toLowerCase() === 'authorization',
+              isNumber: false,
+              isEmail: false,
+              isBoolean: false,
+              isDate: false,
+              isUUID: false,
+              minimumLength: '',
+              maximumLength: '',
+              errorMessage: ''
+            }
+          });
+        }
+      });
+      
+      renderHeaders();
+      generateConfig();
+    }
+
+    function renderHeaders() {
+      const container = document.getElementById('headerFieldsContainer');
+      
+      if (headerParams.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">📋</div>
+            <p>Add headers above to configure validation</p>
+            <small>Headers with empty names will be ignored</small>
+          </div>
+        `;
+        return;
+      }
+      
+      container.innerHTML = headerParams.map(field => renderSimpleFieldCard(field, 'header')).join('');
+    }
+
+    function removeKvRow(button, type) {
+      button.parentElement.remove();
+      if (type === 'query') {
+        updateQueryParams();
+      } else if (type === 'header') {
+        updateHeaders();
+      }
+    }
+
+    function detectType(value) {
+      if (value === '') return 'string';
+      if (value === 'true' || value === 'false') return 'boolean';
+      if (!isNaN(value)) return 'number';
+      return 'string';
+    }
+
+    // ─── Simple Field Card (for params, query, headers) ─────────────────────────
+    function renderSimpleFieldCard(field, source) {
+      const sourceClass = `type-${source}`;
+      const displayKey = field.originalKey || field.key;
+      
+      return `
+        <div class="field-card" data-path="${field.path}">
+          <div class="field-header" onclick="toggleFieldCard('${field.path}')">
+            <div class="field-header-left">
+              <span class="collapse-icon">▼</span>
+              <span class="field-name">${displayKey}</span>
+              <span class="field-type ${sourceClass}">${source}</span>
+            </div>
+          </div>
+          <div class="field-body">
+            <div class="field-options">
+              <div class="option-item tooltip" data-tip="Field is mandatory">
+                <input type="checkbox" id="${field.path}_required" ${field.options.isRequired ? 'checked' : ''} onchange="generateConfig()">
+                <label for="${field.path}_required">isRequired</label>
+              </div>
+              <div class="option-item tooltip" data-tip="Expects a numeric value">
+                <input type="checkbox" id="${field.path}_number" ${field.options.isNumber ? 'checked' : ''} onchange="generateConfig()">
+                <label for="${field.path}_number">isNumber</label>
+              </div>
+              <div class="option-item tooltip" data-tip="Expects a valid email address">
+                <input type="checkbox" id="${field.path}_email" ${field.options.isEmail ? 'checked' : ''} onchange="generateConfig()">
+                <label for="${field.path}_email">isEmail</label>
+              </div>
+              <div class="option-item tooltip" data-tip="Expects true/false">
+                <input type="checkbox" id="${field.path}_boolean" ${field.options.isBoolean ? 'checked' : ''} onchange="generateConfig()">
+                <label for="${field.path}_boolean">isBoolean</label>
+              </div>
+              <div class="option-item tooltip" data-tip="Expects a valid UUID">
+                <input type="checkbox" id="${field.path}_uuid" ${field.options.isUUID ? 'checked' : ''} onchange="generateConfig()">
+                <label for="${field.path}_uuid">isUUID</label>
+              </div>
+            </div>
+            
+            <div class="option-group">
+              <div class="option-group-title">Additional Options</div>
+              <div class="field-options">
+                <div class="option-item tooltip" data-tip="Minimum string length">
+                  <label>minLen:</label>
+                  <input type="number" id="${field.path}_minLength" placeholder="min" oninput="generateConfig()">
+                </div>
+                <div class="option-item tooltip" data-tip="Maximum string length">
+                  <label>maxLen:</label>
+                  <input type="number" id="${field.path}_maxLength" placeholder="max" oninput="generateConfig()">
+                </div>
+                <div class="option-item tooltip" data-tip="Value must be one of these (comma-separated)">
+                  <label>include:</label>
+                  <input type="text" id="${field.path}_include" placeholder="a,b,c" oninput="generateConfig()">
+                </div>
+                <div class="option-item tooltip" data-tip="Value must NOT be one of these (comma-separated)">
+                  <label>exclude:</label>
+                  <input type="text" id="${field.path}_exclude" placeholder="x,y,z" oninput="generateConfig()">
+                </div>
+                <div class="option-item tooltip" data-tip="Custom error message on validation failure">
+                  <label>error:</label>
+                  <input type="text" id="${field.path}_errorMsg" placeholder="Custom error" oninput="generateConfig()">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // ─── Body JSON Parsing ───────────────────────────────────────────────────────
     function loadSample() {
       document.getElementById('jsonInput').value = JSON.stringify({
         "name": "John Doe",
@@ -731,9 +1233,8 @@
       showToast('Sample JSON loaded!', 'success');
     }
 
-    function clearAll() {
+    function clearBody() {
       document.getElementById('jsonInput').value = '';
-      document.getElementById('output').value = '';
       document.getElementById('fieldsContainer').innerHTML = `
         <div class="empty-state">
           <div class="empty-state-icon">📋</div>
@@ -746,6 +1247,36 @@
       document.getElementById('quickActions').style.display = 'none';
       document.getElementById('searchBox').style.display = 'none';
       parsedFields = [];
+      generateConfig();
+    }
+
+    function clearAll() {
+      clearBody();
+      document.getElementById('urlPathInput').value = '';
+      pathParams = [];
+      renderPathParams();
+      
+      document.getElementById('queryParamsContainer').innerHTML = `
+        <div class="kv-row">
+          <input type="text" placeholder="Key (e.g., page)" oninput="updateQueryParams()">
+          <input type="text" placeholder="Sample value (e.g., 1)">
+          <button class="btn-icon" onclick="addQueryParam()">+</button>
+        </div>
+      `;
+      queryParams = [];
+      renderQueryParams();
+      
+      document.getElementById('headersContainer').innerHTML = `
+        <div class="kv-row">
+          <input type="text" placeholder="Header name (e.g., Authorization)" oninput="updateHeaders()">
+          <input type="text" placeholder="Sample value (e.g., Bearer token)">
+          <button class="btn-icon" onclick="addHeader()">+</button>
+        </div>
+      `;
+      headerParams = [];
+      renderHeaders();
+      
+      document.getElementById('output').value = '';
     }
 
     function getFieldType(value) {
@@ -861,6 +1392,7 @@
           type,
           depth,
           value,
+          source: 'body',
           options: {
             isRequired: false,
             isNumber: type === 'number',
@@ -1127,7 +1659,7 @@
       if (opts.errorMessage) code += `.sendErrorMessage('${opts.errorMessage}')`;
       
       // Handle children
-      if (field.children.length > 0) {
+      if (field.children && field.children.length > 0) {
         if (field.children.length === 1 || field.type === 'array') {
           const childCode = generateParamCode(field.children[0], indent + '    ');
           code += `.addChild(\n${childCode}\n${indent}  )`;
@@ -1142,13 +1674,9 @@
       return code;
     }
 
-    function generateConfig() {
-      if (parsedFields.length === 0) {
-        document.getElementById('output').value = '// No fields parsed. Please parse JSON first.';
-        return;
-      }
+    function generateValidatorCode(validationType, fields, indent = '') {
+      if (fields.length === 0) return '';
       
-      const validationType = document.getElementById('validationType').value;
       const isRejected = document.getElementById('globalReject').checked;
       const isForwarded = document.getElementById('globalForward').checked;
       const globalRemoveIfEmpty = document.getElementById('globalRemoveIfEmpty').checked;
@@ -1156,24 +1684,78 @@
       const globalDebug = document.getElementById('globalDebug').checked;
       const errorCode = document.getElementById('errorCode').value;
       
-      let code = `const { \n  ${validationType},\n  param,\n} = require('expressjs-field-validator');\n\n`;
-      code += `${validationType}()`;
+      let code = `${indent}${validationType}()`;
       
-      if (isRejected) code += '\n  .isToBeRejected()';
-      if (isForwarded) code += '\n  .isToBeForwarded()';
-      if (globalRemoveIfEmpty) code += '\n  .removeIfEmpty()';
-      if (globalCleanUp) code += '\n  .cleanUp()';
-      if (globalDebug) code += '\n  .debug(true)';
-      if (errorCode) code += `\n  .sendErrorCode(${errorCode})`;
+      if (isRejected) code += '\n' + indent + '  .isToBeRejected()';
+      if (isForwarded) code += '\n' + indent + '  .isToBeForwarded()';
+      if (globalRemoveIfEmpty && validationType === 'validateBody') code += '\n' + indent + '  .removeIfEmpty()';
+      if (globalCleanUp && validationType === 'validateBody') code += '\n' + indent + '  .cleanUp()';
+      if (globalDebug) code += '\n' + indent + '  .debug(true)';
+      if (errorCode) code += `\n${indent}  .sendErrorCode(${errorCode})`;
       
-      code += '\n  .addParams([\n';
+      code += '\n' + indent + '  .addParams([\n';
       
-      const paramsCode = parsedFields
-        .map(field => generateParamCode(field, '    '))
+      const paramsCode = fields
+        .map(field => generateParamCode(field, indent + '    '))
         .join(',\n');
       
       code += paramsCode;
-      code += '\n  ])';
+      code += '\n' + indent + '  ])';
+      
+      return code;
+    }
+
+    function generateConfig() {
+      const validators = [];
+      const imports = new Set(['param']);
+      
+      // Body validation
+      if (parsedFields.length > 0) {
+        imports.add('validateBody');
+        validators.push({
+          type: 'validateBody',
+          fields: parsedFields
+        });
+      }
+      
+      // Path params validation
+      if (pathParams.length > 0) {
+        imports.add('validateParam');
+        validators.push({
+          type: 'validateParam',
+          fields: pathParams
+        });
+      }
+      
+      // Query params validation
+      if (queryParams.length > 0) {
+        imports.add('validateQuery');
+        validators.push({
+          type: 'validateQuery',
+          fields: queryParams
+        });
+      }
+      
+      // Header validation
+      if (headerParams.length > 0) {
+        imports.add('validateHeader');
+        validators.push({
+          type: 'validateHeader',
+          fields: headerParams
+        });
+      }
+      
+      if (validators.length === 0) {
+        document.getElementById('output').value = '// No fields configured. Add body JSON, path params, query params, or headers.';
+        return;
+      }
+      
+      // Generate imports
+      let code = `const {\n  ${Array.from(imports).join(',\n  ')},\n} = require('expressjs-field-validator');\n\n`;
+      
+      // Generate each validator
+      const validatorCodes = validators.map(v => generateValidatorCode(v.type, v.fields, ''));
+      code += validatorCodes.join(',\n\n');
       
       document.getElementById('output').value = code;
     }

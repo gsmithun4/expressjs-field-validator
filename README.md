@@ -12,6 +12,8 @@ A powerful, lightweight Express.js middleware for validating request fields (bod
 
 🛠️ **[Config Builder Tool](https://expressjs-field-validator-configs-builder.onrender.com)** - Generate validation configs visually!
 
+![Config Builder Screenshot](assets/config-builder-screenshot.png)
+
 [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=gsmithun4_expressjs-field-validator&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=gsmithun4_expressjs-field-validator)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=gsmithun4_expressjs-field-validator&metric=bugs)](https://sonarcloud.io/dashboard?id=gsmithun4_expressjs-field-validator)
 [![code_smells](https://sonarcloud.io/api/project_badges/measure?project=gsmithun4_expressjs-field-validator&metric=code_smells)](https://sonarcloud.io/dashboard?id=gsmithun4_expressjs-field-validator)
@@ -470,6 +472,8 @@ validateParam().isToBeRejected().sendErrorCode(500).addParams([
 ## API Documentation Generator
 
 Automatically generate beautiful HTML documentation for your API endpoints. The generator extracts all routes with validation middlewares and creates an interactive documentation page.
+
+![API Documentation Screenshot](assets/api-docs-screenshot.png)
 
 ### documentResponse()
 
