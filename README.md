@@ -12,6 +12,8 @@ A powerful, lightweight Express.js middleware for validating request fields (bod
 
 🛠️ **[Config Builder Tool](https://expressjs-field-validator-configs-builder.onrender.com)** - Generate validation configs visually!
 
+![Config Builder Screenshot](assets/config-builder-screenshot.png)
+
 [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=gsmithun4_expressjs-field-validator&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=gsmithun4_expressjs-field-validator)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=gsmithun4_expressjs-field-validator&metric=bugs)](https://sonarcloud.io/dashboard?id=gsmithun4_expressjs-field-validator)
 [![code_smells](https://sonarcloud.io/api/project_badges/measure?project=gsmithun4_expressjs-field-validator&metric=code_smells)](https://sonarcloud.io/dashboard?id=gsmithun4_expressjs-field-validator)
@@ -483,6 +485,45 @@ validateParam().isToBeRejected().sendErrorCode(500).addParams([
 ## API Documentation Generator
 
 Automatically generate beautiful HTML documentation for your API endpoints. The generator extracts all routes with validation middlewares and creates an interactive documentation page.
+
+![API Documentation Screenshot](assets/api-docs-screenshot.png)
+
+### documentResponse()
+
+Use `documentResponse()` to document the possible responses for an endpoint. This is a pass-through middleware that attaches response metadata for documentation generation. Place it after validation middleware but before your route handler.
+
+```js
+const { documentResponse } = require('expressjs-field-validator');
+
+app.post('/users',
+  validateBody().isToBeRejected().addParams([
+    param('name').isRequired(),
+    param('email').isRequired().isEmail(),
+  ]),
+  documentResponse({
+    201: { 
+      description: 'User created successfully',
+      body: { message: 'User created', data: { id: 1, name: 'John' } },
+      headers: { 'X-Request-Id': 'uuid' }
+    },
+    422: { 
+      description: 'Validation failed',
+      body: { error: 'Validation failed', details: [] }
+    }
+  }),
+  (req, res) => res.status(201).send({ message: 'User created' })
+);
+```
+
+#### Response Configuration Options
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `description` | `string` | Description of the response |
+| `body` | `any` | Sample response body |
+| `headers` | `object` | Response headers as key-value pairs |
+
+> **Note:** Status codes must be valid HTTP status codes (100-599). The middleware throws an error for invalid status codes.
 
 ### Usage
 
