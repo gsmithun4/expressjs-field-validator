@@ -133,6 +133,12 @@ export interface ParamBuilder {
    */
   removeIfEmpty(): ParamBuilder;
   /**
+   * Validate the field value against a regular expression.
+   * The value is coerced to a string before testing.
+   * @param regex - A `RegExp` object or a regex pattern string.
+   */
+  isMatching(regex: RegExp | string): ParamBuilder;
+  /**
    * Add a custom validation function.
    * @param fn - A function receiving `(value, req, error)`.
    */

@@ -41,6 +41,7 @@ A powerful, lightweight Express.js middleware for validating request fields (bod
       - [isNumber()](#isnumber)
       - [isEmail()](#isemail)
       - [isUUID()](#isuuid)
+      - [isMatching(regex)](#ismatchingregex)
       - [isBoolean()](#isboolean)
       - [isDate()](#isdate)
       - [dateFormat(format)](#dateformatformat)
@@ -139,6 +140,18 @@ Expects number
 Expects email
 ##### isUUID()
 Expects UUID string
+##### isMatching(regex)
+* `regex` *Mandatory* — A `RegExp` object or a regex pattern string
+
+Validates that the field value matches the provided regular expression. The value is coerced to a string before testing.
+
+```js
+// Using a RegExp object
+param('code').isRequired().isMatching(/^[A-Z]+-\d+$/)
+
+// Using a pattern string
+param('postalCode').isRequired().isMatching('^\\d{5}$')
+```
 ##### isBoolean()
 Expects boolean value
 ##### isDate()
