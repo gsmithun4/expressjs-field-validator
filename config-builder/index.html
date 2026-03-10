@@ -1201,6 +1201,10 @@
                   <label>exclude:</label>
                   <input type="text" id="${field.path}_exclude" placeholder="x,y,z" oninput="generateConfig()">
                 </div>
+                <div class="option-item tooltip" data-tip="Value must match this regex pattern (e.g., ^[A-Z]+-\\d+$)">
+                  <label>isMatching:</label>
+                  <input type="text" id="${field.path}_matching" placeholder="^[A-Z]+-\\d+$" oninput="generateConfig()">
+                </div>
                 <div class="option-item tooltip" data-tip="Custom error message on validation failure">
                   <label>error:</label>
                   <input type="text" id="${field.path}_errorMsg" placeholder="Custom error" oninput="generateConfig()">
@@ -1574,6 +1578,10 @@
                   <label>exclude:</label>
                   <input type="text" id="${field.path}_exclude" placeholder="x,y,z" oninput="generateConfig()">
                 </div>
+                <div class="option-item tooltip" data-tip="Value must match this regex pattern (e.g., ^[A-Z]+-\\d+$)">
+                  <label>isMatching:</label>
+                  <input type="text" id="${field.path}_matching" placeholder="^[A-Z]+-\\d+$" oninput="generateConfig()">
+                </div>
                 <div class="option-item tooltip" data-tip="Default value when field is empty">
                   <label>default:</label>
                   <input type="text" id="${field.path}_default" placeholder="value" oninput="generateConfig()">
@@ -1621,7 +1629,8 @@
         shouldExclude: getVal('exclude'),
         defaultValue: getVal('default'),
         removeIfEmpty: getVal('removeIfEmpty'),
-        errorMessage: getVal('errorMsg')
+        errorMessage: getVal('errorMsg'),
+        isMatching: getVal('matching')
       };
     }
 
@@ -1656,6 +1665,7 @@
         code += `.defaultValue(${val})`;
       }
       if (opts.removeIfEmpty) code += '.removeIfEmpty()';
+      if (opts.isMatching) code += `.isMatching(/${opts.isMatching}/)`;
       if (opts.errorMessage) code += `.sendErrorMessage('${opts.errorMessage}')`;
       
       // Handle children
